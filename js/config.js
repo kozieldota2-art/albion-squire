@@ -1,17 +1,17 @@
 // ═══════════════════════════════════════════════════
 // ALBION SQUIRE — config.js
-// Preencha as variáveis marcadas com ⚙️ antes do deploy
 // ═══════════════════════════════════════════════════
 
-// ── ⚙️ Firebase ──────────────────────────────────────
+// ── Firebase ─────────────────────────────────────
 const FIREBASE_CONFIG = {
-  apiKey:            "YOUR_API_KEY",
-  authDomain:        "YOUR_PROJECT.firebaseapp.com",
-  databaseURL:       "https://YOUR_PROJECT-default-rtdb.firebaseio.com",
-  projectId:         "YOUR_PROJECT",
-  storageBucket:     "YOUR_PROJECT.appspot.com",
-  messagingSenderId: "YOUR_SENDER_ID",
-  appId:             "YOUR_APP_ID"
+  apiKey:            "AIzaSyCK3SS7Ibfwj-yaP5-Fj6TuZaqP39u-jPA",
+  authDomain:        "albion-squire.firebaseapp.com",
+  databaseURL:       "https://albion-squire-default-rtdb.firebaseio.com",
+  projectId:         "albion-squire",
+  storageBucket:     "albion-squire.firebasestorage.app",
+  messagingSenderId: "621908988547",
+  appId:             "1:621908988547:web:40574052bddadca03ac1b6",
+  measurementId:     "G-6J0FVTFPRD"
 };
 
 // ── ⚙️ Discord OAuth ─────────────────────────────────
@@ -22,14 +22,14 @@ const DISCORD_SCOPE       = "identify guilds";
 // ── ⚙️ Guild ─────────────────────────────────────────
 const GUILD = {
   name:                 "Nome da Guild",
-  albionId:             "YOUR_ALBION_GUILD_ID",
-  discordServerId:      "YOUR_DISCORD_SERVER_ID",
-  massCallChannelId:    "YOUR_MASS_CALL_CHANNEL_ID",
-  boardChannelId:       "YOUR_BOARDS_CHANNEL_ID",
-  webhookUrl:           "YOUR_DISCORD_WEBHOOK_URL",
-  guildFeePercent:      10,   // % que vai pro caixa da guild
-  repairFeePercent:     3,    // % deduzido pra reparo
-  regearMaxTier:        8,    // tier máximo reageado automaticamente
+  albionId:             "",
+  discordServerId:      "",
+  massCallChannelId:    "",
+  boardChannelId:       "",
+  webhookUrl:           "",
+  guildFeePercent:      10,
+  repairFeePercent:     3,
+  regearMaxTier:        8,
   officerRoles:         ["Líder", "Officer", "Oficial"],
 };
 
@@ -57,7 +57,6 @@ const CITY_API_NAMES = {
 };
 
 // ── Bônus de Cidade ──────────────────────────────────
-// Refino: +40% na especialidade / Craft: +15% na especialidade / Base: +18% sempre
 const CITY_BONUS = {
   "Fort Sterling": { refining:["PLANKS"],      crafting:["HAMMER","SPEAR","HOLY","HEAD_PLATE","ARMOR_CLOTH"] },
   "Lymhurst":      { refining:["CLOTH"],       crafting:["SWORD","BOW","ARCANE","HEAD_LEATHER","SHOES_LEATHER"] },
@@ -69,9 +68,7 @@ const CITY_BONUS = {
 };
 
 // ── Craft BOM ────────────────────────────────────────
-// qty: [T4,T5,T6,T7,T8] | cat: categoria pra match de bônus | bestCity: cidade com bônus
 const CRAFT_BOM = {
-  // ── Armas 1H
   MAIN_SWORD:         { mat:"METALBAR",  qty:[16,20,24,28,32], cat:"SWORD",        bestCity:"Lymhurst",      label:"Espada",          cat2:"Armas" },
   MAIN_AXE:           { mat:"METALBAR",  qty:[16,20,24,28,32], cat:"AXE",          bestCity:"Martlock",      label:"Machado",         cat2:"Armas" },
   MAIN_MACE:          { mat:"METALBAR",  qty:[16,20,24,28,32], cat:"MACE",         bestCity:"Thetford",      label:"Maça",            cat2:"Armas" },
@@ -81,14 +78,12 @@ const CRAFT_BOM = {
   MAIN_FIRESTAFF:     { mat:"PLANKS",    qty:[16,20,24,28,32], cat:"FIRE",         bestCity:"Thetford",      label:"Cajado de Fogo",  cat2:"Armas" },
   MAIN_HOLYSTAFF:     { mat:"PLANKS",    qty:[16,20,24,28,32], cat:"HOLY",         bestCity:"Fort Sterling", label:"Cajado Sagrado",  cat2:"Armas" },
   MAIN_CROSSBOW:      { mat:"PLANKS",    qty:[16,20,24,28,32], cat:"CROSSBOW",     bestCity:"Bridgewatch",   label:"Besta",           cat2:"Armas" },
-  // ── Armas 2H
   "2H_HAMMER":        { mat:"METALBAR",  qty:[20,24,28,32,36], cat:"HAMMER",       bestCity:"Fort Sterling", label:"Martelo 2H",      cat2:"Armas" },
   "2H_QUARTERSTAFF":  { mat:"PLANKS",    qty:[20,24,28,32,36], cat:"QUARTERSTAFF", bestCity:"Martlock",      label:"Bastão",          cat2:"Armas" },
   "2H_BOW":           { mat:"PLANKS",    qty:[20,24,28,32,36], cat:"BOW",          bestCity:"Lymhurst",      label:"Arco",            cat2:"Armas" },
   "2H_CURSEDSTAFF":   { mat:"PLANKS",    qty:[20,24,28,32,36], cat:"CURSED",       bestCity:"Bridgewatch",   label:"Cajado Amaldiç.", cat2:"Armas" },
   "2H_FROSTSTAFF":    { mat:"PLANKS",    qty:[20,24,28,32,36], cat:"FROST",        bestCity:"Martlock",      label:"Cajado de Gelo",  cat2:"Armas" },
   "2H_NATURESTAFF":   { mat:"PLANKS",    qty:[20,24,28,32,36], cat:"NATURE",       bestCity:"Thetford",      label:"Cajado Natureza", cat2:"Armas" },
-  // ── Armaduras
   HEAD_PLATE_SET1:    { mat:"METALBAR",  qty:[12,15,18,21,24], cat:"HEAD_PLATE",   bestCity:"Fort Sterling", label:"Elmo de Placa",   cat2:"Armaduras" },
   ARMOR_PLATE_SET1:   { mat:"METALBAR",  qty:[16,20,24,28,32], cat:"ARMOR_PLATE",  bestCity:"Bridgewatch",   label:"Peitoral Placa",  cat2:"Armaduras" },
   SHOES_PLATE_SET1:   { mat:"METALBAR",  qty:[12,15,18,21,24], cat:"SHOES_PLATE",  bestCity:"Martlock",      label:"Botas de Placa",  cat2:"Armaduras" },
@@ -101,8 +96,6 @@ const CRAFT_BOM = {
 };
 
 // ── Refino BOM ───────────────────────────────────────
-// Para T5+: 3x raw atual + 1x refined anterior → 1x refined atual
-// Para T4:  4x T4_RAW → 1x T4_REFINED (sem sub-material)
 const REFINE_BOM = {
   METALBAR:   { raw:"ORE",   subMat:"METALBAR",   rawQty:3, subQty:1, cat:"METALBAR",   bestCity:"Thetford",      label:"Barra de Metal" },
   LEATHER:    { raw:"HIDE",  subMat:"LEATHER",    rawQty:3, subQty:1, cat:"LEATHER",    bestCity:"Martlock",      label:"Couro" },
@@ -138,45 +131,43 @@ function calcProfit(sellPrice, matCost, city, itemCat, isRefining, useFocus, tax
 }
 
 // ── Tiers e encantamentos ────────────────────────────
-const TIERS     = [4, 5, 6, 7, 8];
-const ENCHANTS  = [0, 1, 2, 3, 4];
+const TIERS    = [4, 5, 6, 7, 8];
+const ENCHANTS = [0, 1, 2, 3, 4];
 
 // ── Weapon stats pra Build Study ─────────────────────
-// Valores base no T8 qualidade normal (simplificado para ZvZ)
 const WEAPON_STATS = {
-  "2H_FROSTSTAFF":   { dmg:945,  cc:"Slow/Root", range:12, role:"DPS/CC",   aoe:true,  notes:"Melhor CC do jogo, excelente em ZvZ" },
-  "2H_CURSEDSTAFF":  { dmg:880,  cc:"Debuff",    range:11, role:"DPS/Debuf",aoe:true,  notes:"Enfraquece o inimigo, ótimo em zerg" },
-  MAIN_FIRESTAFF:    { dmg:1020, cc:"-",          range:13, role:"DPS",      aoe:true,  notes:"Alto burst AoE, frágil" },
-  "2H_BOW":          { dmg:760,  cc:"Slow",       range:14, role:"DPS/Kite", aoe:false, notes:"Excelente pra anti-kite e poking" },
-  "2H_HAMMER":       { dmg:820,  cc:"Stun",       range:3,  role:"Tanque/CC",aoe:true,  notes:"Stun essencial, ainda muito usado" },
-  MAIN_MACE:         { dmg:700,  cc:"Disarm",     range:3,  role:"Suporte",  aoe:false, notes:"Disarm é devastador em ZvZ" },
-  MAIN_HOLYSTAFF:    { dmg:400,  cc:"-",          range:11, role:"Healer",   aoe:true,  notes:"Principal heal de ZvZ" },
-  "2H_NATURESTAFF":  { dmg:350,  cc:"Root",       range:12, role:"Healer/CC",aoe:true,  notes:"Root + heal, versátil" },
-  MAIN_ARCANESTAFF:  { dmg:680,  cc:"Purge",      range:12, role:"Suporte",  aoe:false, notes:"Purge de buffs, antihealer" },
-  MAIN_SWORD:        { dmg:750,  cc:"-",          range:3,  role:"DPS/Chase",aoe:false, notes:"Chase e 1v1, menos usado em ZvZ" },
-  MAIN_AXE:          { dmg:830,  cc:"Bleed",      range:3,  role:"DPS",      aoe:false, notes:"Bleed ignora resistência" },
-  "2H_QUARTERSTAFF": { dmg:900,  cc:"Knockback",  range:4,  role:"Frontline",aoe:true,  notes:"Knockback poderoso, tanque/dps" },
-  MAIN_CROSSBOW:     { dmg:810,  cc:"-",          range:14, role:"DPS",      aoe:true,  notes:"Salvo AoE de longa distância" },
+  "2H_FROSTSTAFF":   { dmg:945,  cc:"Slow/Root", range:12, role:"DPS/CC",    aoe:true,  notes:"Melhor CC do jogo, excelente em ZvZ" },
+  "2H_CURSEDSTAFF":  { dmg:880,  cc:"Debuff",    range:11, role:"DPS/Debuf", aoe:true,  notes:"Enfraquece o inimigo, ótimo em zerg" },
+  MAIN_FIRESTAFF:    { dmg:1020, cc:"-",          range:13, role:"DPS",       aoe:true,  notes:"Alto burst AoE, frágil" },
+  "2H_BOW":          { dmg:760,  cc:"Slow",       range:14, role:"DPS/Kite",  aoe:false, notes:"Excelente pra anti-kite e poking" },
+  "2H_HAMMER":       { dmg:820,  cc:"Stun",       range:3,  role:"Frontline", aoe:true,  notes:"Stun essencial, ainda muito usado" },
+  MAIN_MACE:         { dmg:700,  cc:"Disarm",     range:3,  role:"Suporte",   aoe:false, notes:"Disarm é devastador em ZvZ" },
+  MAIN_HOLYSTAFF:    { dmg:400,  cc:"-",          range:11, role:"Healer",    aoe:true,  notes:"Principal heal de ZvZ" },
+  "2H_NATURESTAFF":  { dmg:350,  cc:"Root",       range:12, role:"Healer/CC", aoe:true,  notes:"Root + heal, versátil" },
+  MAIN_ARCANESTAFF:  { dmg:680,  cc:"Purge",      range:12, role:"Suporte",   aoe:false, notes:"Purge de buffs, antihealer" },
+  MAIN_SWORD:        { dmg:750,  cc:"-",          range:3,  role:"DPS/Chase", aoe:false, notes:"Chase e 1v1, menos usado em ZvZ" },
+  MAIN_AXE:          { dmg:830,  cc:"Bleed",      range:3,  role:"DPS",       aoe:false, notes:"Bleed ignora resistência" },
+  "2H_QUARTERSTAFF": { dmg:900,  cc:"Knockback",  range:4,  role:"Frontline", aoe:true,  notes:"Knockback poderoso, tanque/dps" },
+  MAIN_CROSSBOW:     { dmg:810,  cc:"-",          range:14, role:"DPS",       aoe:true,  notes:"Salvo AoE de longa distância" },
 };
 
 // ── Roles de ZvZ ─────────────────────────────────────
 const ZVZ_ROLES = [
-  { id:"mainhealer",  label:"Main Healer",    color:"#3B8A55", icon:"ti-heart-plus" },
-  { id:"offhealer",   label:"Off Healer",     color:"#2E7048", icon:"ti-heart" },
-  { id:"maindps",     label:"Main DPS",       color:"#B04040", icon:"ti-flame" },
-  { id:"offdps",      label:"Off DPS",        color:"#8A3030", icon:"ti-sword" },
-  { id:"frontline",   label:"Frontline",      color:"#C08828", icon:"ti-shield" },
-  { id:"backline",    label:"Backline",       color:"#1DA898", icon:"ti-bow-arrow" },
-  { id:"cc",          label:"CC/Support",     color:"#7A5DB0", icon:"ti-magnet" },
-  { id:"caller",      label:"Caller",         color:"#DDD8C8", icon:"ti-speakerphone" },
+  { id:"mainhealer",  label:"Main Healer",  color:"#3B8A55", icon:"ti-heart-plus" },
+  { id:"offhealer",   label:"Off Healer",   color:"#2E7048", icon:"ti-heart" },
+  { id:"maindps",     label:"Main DPS",     color:"#B04040", icon:"ti-flame" },
+  { id:"offdps",      label:"Off DPS",      color:"#8A3030", icon:"ti-sword" },
+  { id:"frontline",   label:"Frontline",    color:"#C08828", icon:"ti-shield" },
+  { id:"backline",    label:"Backline",     color:"#1DA898", icon:"ti-bow-arrow" },
+  { id:"cc",          label:"CC/Support",   color:"#7A5DB0", icon:"ti-magnet" },
+  { id:"caller",      label:"Caller",       color:"#DDD8C8", icon:"ti-speakerphone" },
 ];
 
 // ── VOD Review Matrix ─────────────────────────────────
-// Será preenchida pelos officers. Padrão inicial:
 const VOD_MATRIX = [
-  { id:"positioning", label:"Posicionamento",  weight:25, desc:"Ficou no lugar certo da comp?" },
-  { id:"rotation",    label:"Rotação de Skills",weight:25, desc:"Usou skills na ordem correta?" },
-  { id:"target",      label:"Foco de Target",  weight:20, desc:"Atacou o alvo certo?" },
-  { id:"survival",    label:"Sobrevivência",   weight:15, desc:"Minimizou mortes desnecessárias?" },
-  { id:"engage",      label:"Timing de Engage",weight:15, desc:"Entrou e saiu na hora certa?" },
+  { id:"positioning", label:"Posicionamento",   weight:25, desc:"Ficou no lugar certo da comp?" },
+  { id:"rotation",    label:"Rotação de Skills", weight:25, desc:"Usou skills na ordem correta?" },
+  { id:"target",      label:"Foco de Target",   weight:20, desc:"Atacou o alvo certo?" },
+  { id:"survival",    label:"Sobrevivência",    weight:15, desc:"Minimizou mortes desnecessárias?" },
+  { id:"engage",      label:"Timing de Engage", weight:15, desc:"Entrou e saiu na hora certa?" },
 ];
