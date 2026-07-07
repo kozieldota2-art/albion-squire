@@ -1,0 +1,713 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Albion Squire</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Cinzel:wght@700;900&family=Rajdhani:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css">
+  <!-- Firebase SDK -->
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js"></script>
+<style>
+/* ─── Reset ─── */
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%;overflow:hidden}
+a{text-decoration:none;color:inherit}
+button{cursor:pointer;font-family:var(--font-ui)}
+img{display:block}
+input,select{font-family:var(--font-ui)}
+
+/* ─── Tokens ─── */
+:root{
+  --bg:#09100E;--bg-deep:#060C0A;
+  --surface:#0C1210;--surface-2:#0E1512;--surface-3:#111A17;
+  --border:#182320;--border-2:#1E2C27;
+  --teal:#1DA898;--teal-dim:#0C6B5E;--teal-muted:#0C1A17;
+  --gold:#C08828;--gold-muted:#7A5518;
+  --red:#B04040;--red-muted:#200C0C;
+  --green:#3B8A55;--green-muted:#0C2018;
+  --text:#DDD8C8;--text-2:#8A9E96;--text-muted:#4A6058;--text-faint:#1E3028;
+  --font-display:'Cinzel',serif;--font-ui:'Rajdhani',sans-serif;
+  --sidebar-w:192px;--topbar-h:48px;--radius:3px;
+}
+
+/* ─── Layout ─── */
+body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size:14px;line-height:1.5}
+#app{display:flex;flex-direction:column;height:100vh}
+
+/* ─── Topbar ─── */
+#topbar{height:var(--topbar-h);background:var(--surface);border-bottom:1px solid var(--border);display:flex;align-items:center;padding:0 16px;gap:10px;flex-shrink:0;z-index:10}
+.topbar-logo{display:flex;align-items:center;gap:9px;padding-right:16px;border-right:1px solid var(--border);user-select:none}
+.logo-mark{width:26px;height:26px;border:1.5px solid var(--teal);border-radius:var(--radius);display:flex;align-items:center;justify-content:center}
+.logo-mark i{font-size:13px;color:var(--teal)}
+.logo-name{font-family:var(--font-display);font-size:11px;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--text);white-space:nowrap}
+.logo-name span{color:var(--teal)}
+.topbar-spacer{flex:1}
+.topbar-chip{display:flex;align-items:center;gap:6px;padding:3px 10px;border:1px solid var(--border);border-radius:var(--radius);font-size:11px;font-weight:600;letter-spacing:.5px}
+.topbar-chip.server{color:var(--text-muted)}
+.topbar-chip .dot{width:5px;height:5px;border-radius:50%;background:var(--green)}
+.topbar-chip.gold{color:var(--gold)}
+.topbar-chip.gold i{font-size:12px}
+.topbar-chip .label{color:var(--text-muted);font-weight:400}
+#btn-login{display:flex;align-items:center;gap:6px;padding:4px 12px;border:1px solid var(--teal);border-radius:var(--radius);background:transparent;color:var(--teal);font-size:12px;font-weight:700;letter-spacing:.5px;transition:background .15s}
+#btn-login:hover{background:var(--teal-muted)}
+#btn-login i{font-size:14px}
+
+/* ─── Body ─── */
+#body{display:flex;flex:1;overflow:hidden}
+
+/* ─── Sidebar ─── */
+#sidebar{width:var(--sidebar-w);flex-shrink:0;background:var(--bg-deep);border-right:1px solid var(--border);display:flex;flex-direction:column;overflow-y:auto;overflow-x:hidden}
+.nav-section{padding:16px 14px 4px}
+.nav-label{font-size:9px;letter-spacing:2.5px;text-transform:uppercase;color:var(--text-faint);font-weight:700}
+.nav-item{display:flex;align-items:center;gap:9px;padding:7px 14px;color:var(--text-muted);font-size:13px;font-weight:500;letter-spacing:.3px;cursor:pointer;transition:color .15s,background .15s;border-left:2px solid transparent}
+.nav-item i{font-size:14px;flex-shrink:0}
+.nav-item:hover{color:var(--text-2);background:var(--surface)}
+.nav-item.active{color:var(--teal);background:var(--teal-muted);border-left-color:var(--teal);font-weight:700}
+.sidebar-footer{margin-top:auto;padding:12px 14px;border-top:1px solid var(--border)}
+.user-chip{display:flex;align-items:center;gap:8px}
+.user-avatar{width:28px;height:28px;border-radius:50%;background:var(--teal-muted);border:1px solid var(--teal-dim);display:flex;align-items:center;justify-content:center;font-size:12px;font-weight:700;color:var(--teal);flex-shrink:0}
+.user-info .user-name{font-size:12px;font-weight:700;color:var(--text)}
+.user-info .user-role{font-size:10px;color:var(--text-muted);letter-spacing:.5px}
+
+/* ─── Main ─── */
+#main{flex:1;overflow-y:auto;overflow-x:hidden;padding:24px 28px}
+
+/* ─── Page header ─── */
+.page-header{margin-bottom:22px;border-bottom:1px solid var(--border);padding-bottom:16px;display:flex;align-items:flex-end;justify-content:space-between;gap:16px}
+.page-breadcrumb{display:flex;align-items:center;gap:6px;margin-bottom:4px}
+.breadcrumb-section{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--teal);font-weight:700}
+.breadcrumb-sep{color:var(--text-faint);font-size:12px}
+.page-title{font-family:var(--font-display);font-size:18px;font-weight:700;color:var(--text);letter-spacing:1px;text-transform:uppercase}
+.page-subtitle{font-size:11px;color:var(--text-muted);margin-top:3px;letter-spacing:.3px}
+
+/* ─── Cards ─── */
+.stat-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(155px,1fr));gap:10px;margin-bottom:16px}
+.stat-card{background:var(--surface-2);border:1px solid var(--border);border-radius:var(--radius);padding:12px 14px}
+.stat-label{font-size:9px;letter-spacing:2px;text-transform:uppercase;color:var(--text-muted);font-weight:700;margin-bottom:5px}
+.stat-value{font-size:22px;font-weight:700;line-height:1.2}
+.stat-value.gold{color:var(--gold)}.stat-value.green{color:var(--green)}.stat-value.teal{color:var(--teal)}.stat-value.text{color:var(--text)}
+.stat-value small{font-size:11px;color:var(--text-muted);font-weight:500}
+.stat-sub{font-size:10px;color:var(--text-muted);margin-top:2px}
+
+/* ─── Tables ─── */
+.sq-table-wrap{border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.sq-table{width:100%;border-collapse:collapse;font-size:13px}
+.sq-table thead tr{background:var(--bg-deep)}
+.sq-table thead th{padding:8px 12px;font-size:9px;letter-spacing:1.5px;text-transform:uppercase;color:var(--text-faint);font-weight:700;text-align:left;border-bottom:1px solid var(--border)}
+.sq-table thead th.right{text-align:right}.sq-table thead th.teal{color:var(--teal)}
+.sq-table tbody tr:nth-child(odd){background:var(--surface-2)}
+.sq-table tbody tr:nth-child(even){background:var(--surface)}
+.sq-table tbody tr:hover{background:var(--surface-3)}
+.sq-table tbody td{padding:10px 12px;border-bottom:1px solid var(--border);vertical-align:middle}
+.sq-table tbody tr:last-child td{border-bottom:none}
+.sq-table td.right{text-align:right}.sq-table td.muted{color:var(--text-2);font-weight:600}
+.sq-table td.gold{color:var(--gold);font-weight:700}.sq-table td.red{color:var(--red);font-weight:700}
+.sq-table td.rank{color:var(--text-muted);font-weight:700;width:32px}.sq-table td.rank.top1{color:var(--gold)}
+.item-name{font-size:13px;font-weight:700;color:var(--text)}.item-sub{font-size:10px;color:var(--text-muted);margin-top:1px}
+
+/* ─── Badges ─── */
+.badge{display:inline-block;font-size:10px;font-weight:700;padding:2px 6px;border-radius:2px;letter-spacing:.3px}
+.badge.green{background:var(--green-muted);color:var(--green)}.badge.red{background:var(--red-muted);color:var(--red)}
+.badge.teal{background:var(--teal-muted);color:var(--teal)}.badge.gold{background:#1A1200;color:var(--gold)}
+
+/* ─── Filters ─── */
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap;align-items:center}
+.btn-group{display:flex;border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}
+.btn-group button{padding:4px 11px;background:transparent;border:none;border-left:1px solid var(--border);color:var(--text-muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:background .12s,color .12s}
+.btn-group button:first-child{border-left:none}
+.btn-group button:hover{background:var(--surface-3);color:var(--text-2)}
+.btn-group button.active{background:var(--teal-muted);color:var(--teal)}
+.toggle-chip{display:flex;align-items:center;gap:6px;padding:4px 11px;border:1px solid var(--border);border-radius:var(--radius);background:transparent;color:var(--text-muted);font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:1px;transition:border-color .15s,color .15s}
+.toggle-chip.on{border-color:var(--teal-dim);color:var(--teal)}
+.toggle-track{width:26px;height:13px;border-radius:7px;background:var(--border-2);position:relative;transition:background .15s;flex-shrink:0}
+.toggle-track.on{background:var(--teal-dim)}
+.toggle-thumb{width:9px;height:9px;background:var(--text-muted);border-radius:50%;position:absolute;top:2px;left:2px;transition:left .15s,background .15s}
+.toggle-track.on .toggle-thumb{left:15px;background:var(--teal)}
+
+/* ─── Form elements ─── */
+.sq-input{background:var(--surface-2);border:1px solid var(--border-2);border-radius:var(--radius);color:var(--text);padding:6px 10px;font-size:12px;font-family:var(--font-ui);width:100%;outline:none;transition:border-color .15s}
+.sq-input:focus{border-color:var(--teal-dim)}
+.sq-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--text-muted);display:block;margin-bottom:4px}
+.sq-range{width:100%;accent-color:var(--teal);cursor:pointer}
+.sq-btn{padding:6px 14px;border:1px solid var(--border-2);border-radius:var(--radius);background:var(--surface-3);color:var(--text-2);font-size:12px;font-weight:700;letter-spacing:.5px;transition:background .15s,color .15s}
+.sq-btn:hover{background:var(--border-2);color:var(--text)}
+.sq-btn-primary{padding:6px 14px;border:1px solid var(--teal-dim);border-radius:var(--radius);background:var(--teal-muted);color:var(--teal);font-size:12px;font-weight:700;letter-spacing:.5px;transition:background .15s}
+.sq-btn-primary:hover{background:var(--teal-dim)}
+.sq-btn-danger{padding:6px 14px;border:1px solid var(--red);border-radius:var(--radius);background:var(--red-muted);color:var(--red);font-size:12px;font-weight:700;letter-spacing:.5px}
+
+/* ─── Comp slots ─── */
+.comp-slot{min-width:100px;padding:6px 8px;border:1px dashed var(--border-2);border-radius:var(--radius);transition:border-color .15s;cursor:grab}
+.comp-slot.filled{border-style:solid;border-color:var(--teal-dim);background:var(--teal-muted)}
+.comp-slot:hover{border-color:var(--teal)}
+.attendee-row{display:flex;align-items:center;justify-content:space-between;padding:6px 8px;border:1px solid var(--border);border-radius:var(--radius);margin-bottom:4px;background:var(--surface);cursor:grab;transition:background .12s}
+.attendee-row:hover{background:var(--surface-3)}
+
+/* ─── Modal ─── */
+#vod-review-modal{display:none;position:fixed;inset:0;background:rgba(0,0,0,.7);z-index:100;align-items:center;justify-content:center;padding:20px}
+
+/* ─── Table footer ─── */
+.table-footer{display:flex;align-items:center;gap:6px;margin-top:8px}
+.table-footer span{font-size:10px;color:var(--text-faint);letter-spacing:.3px}
+.table-footer i{font-size:11px;color:var(--text-faint)}
+
+/* ─── Pages ─── */
+.page{display:none}
+.page.active{display:block}
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:var(--bg-deep)}
+::-webkit-scrollbar-thumb{background:var(--border-2);border-radius:3px}
+::-webkit-scrollbar-thumb:hover{background:var(--text-faint)}
+</style>
+</head>
+<body>
+<div id="app">
+
+<!-- ── Topbar ── -->
+<div id="topbar">
+  <div class="topbar-logo">
+    <div class="logo-mark"><i class="ti ti-shield-half" aria-hidden="true"></i></div>
+    <span class="logo-name">Albion <span>Squire</span></span>
+  </div>
+  <div class="topbar-spacer"></div>
+  <div class="topbar-chip server"><div class="dot"></div><span>Americas</span></div>
+  <div class="topbar-chip gold"><i class="ti ti-coin" aria-hidden="true"></i><span id="gold-price">—</span><span class="label">gold</span></div>
+  <div class="topbar-chip" id="guild-balance-chip" style="color:var(--text-2);">
+    <i class="ti ti-building-bank" aria-hidden="true"></i><span id="guild-balance">—</span><span class="label">caixa</span>
+  </div>
+  <button id="btn-login"><i class="ti ti-brand-discord" aria-hidden="true"></i> Entrar</button>
+</div>
+
+<!-- ── Body ── -->
+<div id="body">
+
+<!-- ── Sidebar ── -->
+<nav id="sidebar">
+  <div class="nav-section"><span class="nav-label">Mercado</span></div>
+  <div class="nav-item" data-page="craft"><i class="ti ti-hammer" aria-hidden="true"></i>Ranking Craft</div>
+  <div class="nav-item" data-page="precos"><i class="ti ti-chart-line" aria-hidden="true"></i>Preços ao Vivo</div>
+
+  <div class="nav-section"><span class="nav-label">Guild</span></div>
+  <div class="nav-item" data-page="dashboard"><i class="ti ti-layout-dashboard" aria-hidden="true"></i>Dashboard</div>
+  <div class="nav-item" data-page="membros"><i class="ti ti-users" aria-hidden="true"></i>Membros</div>
+  <div class="nav-item" data-page="regear"><i class="ti ti-heart-handshake" aria-hidden="true"></i>Regear</div>
+  <div class="nav-item" data-page="vod"><i class="ti ti-video" aria-hidden="true"></i>VOD Review</div>
+  <div class="nav-item" data-page="marketing"><i class="ti ti-news" aria-hidden="true"></i>Marketing</div>
+
+  <div class="nav-section"><span class="nav-label">ZvZ</span></div>
+  <div class="nav-item" data-page="masscall"><i class="ti ti-speakerphone" aria-hidden="true"></i>Mass Call</div>
+  <div class="nav-item" data-page="builds"><i class="ti ti-sword" aria-hidden="true"></i>Builds</div>
+  <div class="nav-item" data-page="boards"><i class="ti ti-trophy" aria-hidden="true"></i>Boards</div>
+  <div class="nav-item" data-page="buildstudy"><i class="ti ti-microscope" aria-hidden="true"></i>Build Study</div>
+
+  <div class="sidebar-footer">
+    <div class="user-chip">
+      <div class="user-avatar" id="user-avatar">?</div>
+      <div class="user-info">
+        <div class="user-name" id="user-name">Visitante</div>
+        <div class="user-role" id="user-role">Não autenticado</div>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<!-- ── Main ── -->
+<main id="main">
+
+<!-- ══════ CRAFT ══════ -->
+<section class="page active" id="page-craft">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Mercado</span></div>
+      <h1 class="page-title">Ranking de Craft</h1>
+      <p class="page-subtitle" id="craft-subtitle">Carregando dados da API...</p>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center;">
+      <button class="toggle-chip on" id="toggle-foco" aria-pressed="true">
+        <i class="ti ti-focus" style="font-size:13px;" aria-hidden="true"></i>Com foco
+        <div class="toggle-track on"><div class="toggle-thumb"></div></div>
+      </button>
+      <button class="sq-btn" id="craft-refresh">Atualizar</button>
+    </div>
+  </div>
+  <div class="stat-grid">
+    <div class="stat-card"><div class="stat-label">Maior lucro</div><div class="stat-value gold" id="craft-stat-top">—</div><div class="stat-sub" id="craft-stat-topit">carregando...</div></div>
+    <div class="stat-card"><div class="stat-label">Margem média</div><div class="stat-value green" id="craft-stat-margin">—</div><div class="stat-sub">Itens lucrativos</div></div>
+    <div class="stat-card"><div class="stat-label">Itens lucrativos</div><div class="stat-value text" id="craft-stat-count">—</div><div class="stat-sub">Margem &gt; 0%</div></div>
+    <div class="stat-card"><div class="stat-label">Melhor categoria</div><div class="stat-value teal" id="craft-stat-bestcat">—</div><div class="stat-sub" id="craft-stat-bestcity">—</div></div>
+  </div>
+  <div class="filter-row">
+    <div class="btn-group" id="filter-cat">
+      <button class="active" data-val="todos">Todos</button>
+      <button data-val="armas">Armas</button>
+      <button data-val="armaduras">Armaduras</button>
+      <button data-val="refino">Refino</button>
+    </div>
+    <div class="btn-group" id="filter-tier">
+      <button data-val="T4">T4</button>
+      <button data-val="T5">T5</button>
+      <button class="active" data-val="T6">T6</button>
+      <button data-val="T7">T7</button>
+      <button data-val="T8">T8</button>
+    </div>
+    <div class="btn-group" id="filter-city">
+      <button class="active" data-val="todas">Todas</button>
+      <button data-val="Fort Sterling">Fort S.</button>
+      <button data-val="Lymhurst">Lymhurst</button>
+      <button data-val="Bridgewatch">Bridge.</button>
+      <button data-val="Martlock">Martlock</button>
+      <button data-val="Thetford">Thetford</button>
+    </div>
+    <div class="btn-group" id="filter-sort">
+      <button class="active" data-val="profit">Lucro</button>
+      <button data-val="margin">Margem</button>
+    </div>
+  </div>
+  <div class="sq-table-wrap">
+    <table class="sq-table">
+      <thead><tr>
+        <th>#</th><th>Item</th><th>Cidade</th>
+        <th class="right">Custo mat.</th><th class="right">Preço venda</th>
+        <th class="right teal">Lucro</th><th class="right">Margem</th><th>Cat.</th>
+      </tr></thead>
+      <tbody id="craft-tbody">
+        <tr><td colspan="8" style="text-align:center;padding:40px;color:var(--teal);font-size:12px;letter-spacing:1px;">Buscando preços...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div class="table-footer">
+    <i class="ti ti-refresh" aria-hidden="true"></i>
+    <span>Auto-atualização 5 min · Fonte: albion-online-data.com · Receitas: ao-bin-dumps</span>
+  </div>
+</section>
+
+<!-- ══════ PREÇOS AO VIVO ══════ -->
+<section class="page" id="page-precos">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Mercado</span></div>
+      <h1 class="page-title">Preços ao Vivo</h1>
+      <p class="page-subtitle">Busca de preço por item em todas as cidades</p>
+    </div>
+  </div>
+  <div style="display:flex;gap:8px;margin-bottom:14px;">
+    <input id="price-search" class="sq-input" placeholder="Buscar item (ex: T6_MAIN_SWORD, T8 Frost Staff...)" style="max-width:400px;">
+    <button class="sq-btn-primary" onclick="PricesModule.search()">Buscar</button>
+  </div>
+  <div id="price-results">
+    <div style="text-align:center;padding:60px;color:var(--text-muted);opacity:.5;">
+      <i class="ti ti-chart-line" style="font-size:32px;display:block;margin-bottom:8px;" aria-hidden="true"></i>
+      Digite o ID do item ou nome pra buscar preços
+    </div>
+  </div>
+</section>
+
+<!-- ══════ DASHBOARD ══════ -->
+<section class="page" id="page-dashboard">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Guild</span></div>
+      <h1 class="page-title">Dashboard</h1>
+      <p class="page-subtitle" id="dashboard-guild-name">Carregando...</p>
+    </div>
+  </div>
+  <div class="stat-grid" id="dashboard-stats">
+    <div class="stat-card"><div class="stat-label">Caixa da Guild</div><div class="stat-value gold" id="dash-balance">—</div><div class="stat-sub">Silver virtual</div></div>
+    <div class="stat-card"><div class="stat-label">Membros ativos</div><div class="stat-value text" id="dash-members">—</div><div class="stat-sub">Últimos 7 dias</div></div>
+    <div class="stat-card"><div class="stat-label">Kills semana</div><div class="stat-value green" id="dash-kills">—</div><div class="stat-sub">Guild total</div></div>
+    <div class="stat-card"><div class="stat-label">Regeares pendentes</div><div class="stat-value teal" id="dash-regeares">—</div><div class="stat-sub">Aguardando aprovação</div></div>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;" id="dashboard-content">
+    <div>
+      <div class="stat-label" style="margin-bottom:8px;">Últimas Atividades</div>
+      <div id="dash-activity" style="font-size:12px;color:var(--text-muted);">Carregando...</div>
+    </div>
+    <div>
+      <div class="stat-label" style="margin-bottom:8px;">Top Players da Semana</div>
+      <div id="dash-top-players" style="font-size:12px;color:var(--text-muted);">Carregando...</div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ MEMBROS ══════ -->
+<section class="page" id="page-membros">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Guild</span></div>
+      <h1 class="page-title">Membros</h1>
+      <p class="page-subtitle">Gestão de membros, IPs e saldos</p>
+    </div>
+    <div style="display:flex;gap:8px;">
+      <input class="sq-input" placeholder="Buscar membro..." style="width:200px;" id="member-search">
+    </div>
+  </div>
+  <div class="sq-table-wrap">
+    <table class="sq-table">
+      <thead><tr>
+        <th>#</th><th>Player</th><th>Role</th><th class="right">IP</th>
+        <th class="right">Kills</th><th class="right">Mortes</th><th class="right">K/D</th>
+        <th class="right">Attendance</th><th class="right gold">Saldo</th>
+      </tr></thead>
+      <tbody id="membros-tbody">
+        <tr><td colspan="9" style="text-align:center;padding:30px;color:var(--text-muted);">Carregando...</td></tr>
+      </tbody>
+    </table>
+  </div>
+  <div style="margin-top:16px;">
+    <div class="stat-label" style="margin-bottom:8px;">Saldos individuais</div>
+    <div class="sq-table-wrap">
+      <table class="sq-table">
+        <thead><tr><th>#</th><th>Player</th><th>Role</th><th class="right gold">Saldo</th><th></th></tr></thead>
+        <tbody id="balances-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ REGEAR ══════ -->
+<section class="page" id="page-regear">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Guild</span></div>
+      <h1 class="page-title">Regear</h1>
+      <p class="page-subtitle">Reposição automática via Murder Ledger · Aprovação de officers</p>
+    </div>
+    <button class="sq-btn" onclick="GuildModule.init()">Atualizar mortes</button>
+  </div>
+  <div id="regear-list">
+    <div style="text-align:center;padding:40px;color:var(--text-muted);">Carregando...</div>
+  </div>
+</section>
+
+<!-- ══════ VOD REVIEW ══════ -->
+<section class="page" id="page-vod">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Guild</span></div>
+      <h1 class="page-title">VOD Review</h1>
+      <p class="page-subtitle">Submissão e avaliação de VODs com matriz de qualidade</p>
+    </div>
+  </div>
+  <!-- Submit form -->
+  <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:16px;">
+    <div class="stat-label" style="margin-bottom:8px;">Enviar VOD</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr auto;gap:8px;">
+      <input id="vod-player-name" class="sq-input" placeholder="Nome do player">
+      <input id="vod-url" class="sq-input" placeholder="Link YouTube / Twitch">
+      <button class="sq-btn-primary" id="vod-submit-btn">Enviar</button>
+    </div>
+  </div>
+  <div id="vod-list"></div>
+  <!-- Modal de review -->
+  <div id="vod-review-modal"></div>
+</section>
+
+<!-- ══════ MARKETING ══════ -->
+<section class="page" id="page-marketing">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Guild</span></div>
+      <h1 class="page-title">Marketing</h1>
+      <p class="page-subtitle">Notícias, guerras, mapas e vídeos da guild</p>
+    </div>
+  </div>
+  <div style="display:grid;grid-template-columns:2fr 1fr;gap:16px;">
+    <!-- News feed -->
+    <div>
+      <div class="stat-label" style="margin-bottom:10px;">Feed de Notícias</div>
+      <div id="marketing-news">
+        <div style="background:var(--surface-2);border:1px solid var(--teal-dim);border-radius:3px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;gap:10px;margin-bottom:8px;">
+            <span class="badge teal">Vitória</span>
+            <span style="font-size:10px;color:var(--text-muted);">há 2 horas</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">ZvZ Terça — 31:16 vs InimiguinhoGuild</div>
+          <div style="font-size:12px;color:var(--text-2);">Dominamos o blackzone central. 18M de fama coletiva. Top killer: Koziel.</div>
+        </div>
+        <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:14px;margin-bottom:10px;">
+          <div style="display:flex;gap:10px;margin-bottom:8px;">
+            <span class="badge gold">Recrutamento</span>
+            <span style="font-size:10px;color:var(--text-muted);">há 1 dia</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--text);margin-bottom:4px;">Procuramos Healers T8</div>
+          <div style="font-size:12px;color:var(--text-2);">Requisito: IP 1400+, presença mínima 70%, VOD review aprovado.</div>
+        </div>
+      </div>
+    </div>
+    <!-- Mapas e guerras -->
+    <div>
+      <div class="stat-label" style="margin-bottom:10px;">Territórios</div>
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:12px;margin-bottom:10px;">
+        <div style="font-size:12px;font-weight:700;color:var(--teal);">Zones controladas</div>
+        <div id="marketing-territories" style="margin-top:8px;font-size:11px;color:var(--text-muted);">Nenhuma zona cadastrada</div>
+      </div>
+      <div class="stat-label" style="margin-bottom:10px;">Guerras ativas</div>
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:12px;">
+        <div id="marketing-wars" style="font-size:11px;color:var(--text-muted);">Sem guerras declaradas</div>
+      </div>
+      <div class="stat-label" style="margin:12px 0 8px;">Vídeos</div>
+      <div style="background:var(--surface-2);border:1px solid var(--border);border-radius:3px;padding:12px;">
+        <div id="marketing-videos" style="font-size:11px;color:var(--text-muted);">Nenhum vídeo publicado</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ MASS CALL ══════ -->
+<section class="page" id="page-masscall">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">ZvZ</span></div>
+      <h1 class="page-title">Mass Call</h1>
+      <p class="page-subtitle">Convocações, composições e splits via Discord</p>
+    </div>
+  </div>
+  <div id="masscall-create"></div>
+  <div id="masscall-list"></div>
+  <div id="masscall-dashboard-wrapper" style="margin-top:16px;">
+    <div id="masscall-dashboard"></div>
+    <div id="masscall-loot" style="margin-top:16px;"></div>
+    <div id="masscall-split-result" style="margin-top:16px;"></div>
+  </div>
+</section>
+
+<!-- ══════ BUILDS ══════ -->
+<section class="page" id="page-builds">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">ZvZ</span></div>
+      <h1 class="page-title">Builds</h1>
+      <p class="page-subtitle">Composições editáveis pelos officers</p>
+    </div>
+    <button class="sq-btn-primary" onclick="alert('Em breve: criar nova composição')">+ Nova Comp</button>
+  </div>
+  <div id="builds-list">
+    <div style="text-align:center;padding:40px;color:var(--text-muted);">Carregando...</div>
+  </div>
+</section>
+
+<!-- ══════ BOARDS ══════ -->
+<section class="page" id="page-boards">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">ZvZ</span></div>
+      <h1 class="page-title">Battle Boards</h1>
+      <p class="page-subtitle">Batalhas, kills e leaderboard da guild</p>
+    </div>
+    <button class="sq-btn" id="boards-refresh">Atualizar</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <div class="stat-label" style="margin-bottom:8px;">Batalhas recentes</div>
+      <div id="boards-battles">
+        <div style="text-align:center;padding:40px;color:var(--teal);font-size:12px;letter-spacing:1px;">Carregando...</div>
+      </div>
+    </div>
+    <div>
+      <div id="boards-leaderboard" style="margin-bottom:16px;"></div>
+      <div class="stat-label" style="margin-bottom:8px;">Feed de kills</div>
+      <div id="boards-kills" style="max-height:400px;overflow-y:auto;"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ══════ BUILD STUDY ══════ -->
+<section class="page" id="page-buildstudy">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">ZvZ</span></div>
+      <h1 class="page-title">Build Study</h1>
+      <p class="page-subtitle">Análise de dano por IP, sinergias e meta ZvZ</p>
+    </div>
+    <button class="sq-btn" onclick="BuildStudyModule.clearSelection()">Limpar</button>
+  </div>
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div>
+      <div class="stat-label" style="margin-bottom:8px;">Selecionar Armas</div>
+      <div id="buildstudy-picker"></div>
+    </div>
+    <div>
+      <div class="stat-label" style="margin-bottom:8px;">Análise da Seleção</div>
+      <div id="buildstudy-analysis"></div>
+    </div>
+  </div>
+</section>
+
+</main>
+</div>
+</div>
+
+<!-- VOD Review modal global -->
+<div id="vod-review-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:100;align-items:center;justify-content:center;padding:20px;"></div>
+
+<!-- ── Scripts ── -->
+<script src="js/config.js"></script>
+<script src="js/api.js"></script>
+<script src="js/craft.js"></script>
+<script src="js/masscall.js"></script>
+<script src="js/guild.js"></script>
+<script src="js/boards.js"></script>
+<script src="js/buildstudy.js"></script>
+
+<script>
+// ── App bootstrap ────────────────────────────────
+(function() {
+
+  // Firebase init
+  try {
+    if (FIREBASE_CONFIG.apiKey !== "YOUR_API_KEY") {
+      firebase.initializeApp(FIREBASE_CONFIG);
+      console.log("✓ Firebase conectado");
+    }
+  } catch(e) { console.warn("Firebase não configurado:", e.message); }
+
+  // ── Router ─────────────────────────────────────
+  const navItems = document.querySelectorAll('.nav-item');
+  const pages    = document.querySelectorAll('.page');
+  let   current  = "";
+
+  const moduleInitMap = {
+    craft:      () => CraftModule.init(),
+    masscall:   () => MassCallModule.init(),
+    membros:    () => GuildModule.init(),
+    regear:     () => GuildModule.init(),
+    vod:        () => GuildModule.init(),
+    builds:     () => GuildModule.init(),
+    boards:     () => BoardsModule.init(),
+    buildstudy: () => BuildStudyModule.init(),
+    dashboard:  () => DashboardModule.init(),
+  };
+
+  const initialized = {};
+
+  function goTo(pageId) {
+    if (!document.getElementById(`page-${pageId}`)) return;
+    navItems.forEach(n => n.classList.toggle('active', n.dataset.page === pageId));
+    pages.forEach(p => p.classList.toggle('active', p.id === 'page-' + pageId));
+    history.replaceState(null, '', '#' + pageId);
+    current = pageId;
+    if (!initialized[pageId] && moduleInitMap[pageId]) {
+      initialized[pageId] = true;
+      moduleInitMap[pageId]();
+    }
+  }
+
+  navItems.forEach(item => item.addEventListener('click', () => goTo(item.dataset.page)));
+  const initial = location.hash.replace('#','') || 'craft';
+  goTo(initial);
+
+  // ── Gold price ──────────────────────────────────
+  AlbionAPI.getGoldPrice()
+    .then(data => {
+      const p = Array.isArray(data) ? data[0]?.price : data?.price;
+      if (p) document.getElementById('gold-price').textContent = p.toLocaleString('pt-BR');
+    })
+    .catch(() => {});
+
+  // ── Guild balance (Firebase) ────────────────────
+  try {
+    if (firebase.apps.length) {
+      firebase.database().ref('guildBalance').on('value', snap => {
+        const v = snap.val() || 0;
+        const el = document.getElementById('guild-balance');
+        if (el) el.textContent = (v >= 1e6 ? (v/1e6).toFixed(1)+"M" : Math.round(v/1000)+"K");
+      });
+    }
+  } catch(e) {}
+
+  // ── Preços module inline ────────────────────────
+  window.PricesModule = {
+    search: async function() {
+      const q   = document.getElementById('price-search')?.value?.trim();
+      if (!q) return;
+      const el  = document.getElementById('price-results');
+      if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--teal);">Buscando...</div>';
+
+      // Tentar como item ID direto, senão tentar converter nome simples
+      const itemId = q.toUpperCase().replace(/ /g,'_');
+      try {
+        const prices = await AlbionAPI.getPrices([itemId]);
+        if (!prices.length || !prices[0].sell_price_min) {
+          if (el) el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text-muted);">Nenhum preço encontrado. Use o ID exato do item (ex: T6_MAIN_SWORD)</div>';
+          return;
+        }
+        const img = AlbionAPI.itemImageUrl(itemId);
+        if (el) el.innerHTML = `
+          <div style="display:flex;align-items:center;gap:12px;margin-bottom:16px;padding:14px;background:var(--surface-2);border:1px solid var(--border);border-radius:3px;">
+            <img src="${img}" width="48" height="48" style="border-radius:3px;" onerror="this.style.display='none'">
+            <div>
+              <div class="item-name">${itemId}</div>
+              <div class="item-sub">${prices.length} ofertas encontradas</div>
+            </div>
+          </div>
+          <div class="sq-table-wrap">
+            <table class="sq-table">
+              <thead><tr><th>Cidade</th><th class="right">Venda (min)</th><th class="right">Compra (max)</th><th>Atualizado</th></tr></thead>
+              <tbody>
+                ${prices.map(p => `
+                <tr>
+                  <td><span class="badge teal">${p.city}</span></td>
+                  <td class="right gold">${p.sell_price_min > 0 ? p.sell_price_min.toLocaleString('pt-BR') : '—'}</td>
+                  <td class="right muted">${p.buy_price_max > 0 ? p.buy_price_max.toLocaleString('pt-BR') : '—'}</td>
+                  <td style="font-size:10px;color:var(--text-muted);">${p.sell_price_min_date ? new Date(p.sell_price_min_date).toLocaleString('pt-BR') : '—'}</td>
+                </tr>`).join('')}
+              </tbody>
+            </table>
+          </div>`;
+      } catch(e) {
+        if (el) el.innerHTML = `<div style="text-align:center;padding:20px;color:var(--red);">Erro: ${e.message}</div>`;
+      }
+    }
+  };
+
+  // Permite buscar com Enter
+  document.getElementById('price-search')?.addEventListener('keydown', e => {
+    if (e.key === 'Enter') PricesModule.search();
+  });
+
+  // ── Dashboard module inline ─────────────────────
+  window.DashboardModule = {
+    init: async function() {
+      document.getElementById('dashboard-guild-name').textContent = GUILD.name;
+      document.getElementById('dash-members').textContent = '8';
+      document.getElementById('dash-kills').textContent = '247';
+      document.getElementById('dash-regeares').textContent = '2';
+
+      const db = firebase.apps.length ? firebase.database() : null;
+      if (db) {
+        db.ref('guildBalance').once('value').then(s => {
+          const v = s.val() || 0;
+          document.getElementById('dash-balance').textContent =
+            (v >= 1e6 ? (v/1e6).toFixed(2)+'M' : Math.round(v).toLocaleString('pt-BR')) + ' silver';
+        });
+      }
+
+      document.getElementById('dash-activity').innerHTML = `
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          ${['ZvZ Terça finalizado — 31:16','Regear aprovado: XiaoPvP — 1.82M','VOD Review: FrostBot — Nota 7.8','Mass Call criado: HCE Sexta'].map((a,i) =>
+            `<div style="padding:6px 10px;background:var(--surface-2);border:1px solid var(--border);border-radius:3px;font-size:11px;color:var(--text-2);">${a}</div>`).join('')}
+        </div>`;
+
+      document.getElementById('dash-top-players').innerHTML = `
+        <div class="sq-table-wrap">
+          <table class="sq-table">
+            <thead><tr><th>#</th><th>Player</th><th class="right">Kills</th></tr></thead>
+            <tbody>
+              ${[['Koziel',142],['XiaoPvP',98],['FrostBot',89]].map(([n,k],i) =>
+                `<tr><td class="rank${i===0?' top1':''}">${i+1}</td><td class="item-name">${n}</td><td class="right" style="color:var(--green);">${k}</td></tr>`).join('')}
+            </tbody>
+          </table>
+        </div>`;
+    }
+  };
+
+})();
+</script>
+</body>
+</html>
