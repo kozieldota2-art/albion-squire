@@ -190,7 +190,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
 <!-- ── Sidebar ── -->
 <nav id="sidebar">
   <div class="nav-section"><span class="nav-label">Mercado</span></div>
-  <div class="nav-item" data-page="craft"><i class="ti ti-hammer" aria-hidden="true"></i>Ranking Craft</div>
+  <div class="nav-item" data-page="mercado"><i class="ti ti-coins" aria-hidden="true"></i>Mercado</div>
   <div class="nav-item" data-page="precos"><i class="ti ti-chart-line" aria-hidden="true"></i>Preços ao Vivo</div>
 
   <div class="nav-section"><span class="nav-label">Guild</span></div>
@@ -285,6 +285,18 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
     <i class="ti ti-refresh" aria-hidden="true"></i>
     <span>Auto-atualização 5 min · Fonte: albion-online-data.com · Receitas: ao-bin-dumps</span>
   </div>
+</section>
+
+<!-- ══════ MERCADO ══════ -->
+<section class="page" id="page-mercado">
+  <div class="page-header">
+    <div>
+      <div class="page-breadcrumb"><span class="breadcrumb-section">Mercado</span></div>
+      <h1 class="page-title">Oportunidades de Mercado</h1>
+      <p class="page-subtitle">Craft · Refino · Encantamento · Transporte · Black Market</p>
+    </div>
+  </div>
+  <div id="market-content"></div>
 </section>
 
 <!-- ══════ PREÇOS AO VIVO ══════ -->
@@ -550,6 +562,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
 <script src="js/config.js"></script>
 <script src="js/api.js"></script>
 <script src="js/craft.js"></script>
+<script src="js/market.js"></script>
 <script src="js/masscall.js"></script>
 <script src="js/guild.js"></script>
 <script src="js/boards.js"></script>
@@ -574,6 +587,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
 
   const moduleInitMap = {
     craft:      () => CraftModule.init(),
+    mercado:    () => MarketModule.init(),
     masscall:   () => MassCallModule.init(),
     membros:    () => GuildModule.init(),
     regear:     () => GuildModule.init(),
