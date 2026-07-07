@@ -35,35 +35,99 @@ const MarketModule = (() => {
   const ROYAL_CITIES = ['Fort Sterling','Lymhurst','Bridgewatch','Martlock','Thetford','Caerleon','Brecilien'];
   const TIERS_IDX    = [4, 5, 6, 7, 8];
 
-  // ── Itens craftáveis ────────────────────────────
+  // ── Itens craftáveis — lista completa com nomes oficiais ──
   const CRAFT_ITEMS = [
-    // 1H — 16 mats
-    { id:'MAIN_SWORD',         mat:'METALBAR', qty:[16,20,24,28,32], label:'Espada',          city:'Lymhurst',      cat:'SWORD'       },
-    { id:'MAIN_AXE',           mat:'METALBAR', qty:[16,20,24,28,32], label:'Machado',         city:'Martlock',      cat:'AXE'         },
-    { id:'MAIN_MACE',          mat:'METALBAR', qty:[16,20,24,28,32], label:'Maça',            city:'Thetford',      cat:'MACE'        },
-    { id:'MAIN_SPEAR',         mat:'METALBAR', qty:[16,20,24,28,32], label:'Lança',           city:'Fort Sterling', cat:'SPEAR'       },
-    { id:'MAIN_DAGGER',        mat:'METALBAR', qty:[16,20,24,28,32], label:'Adaga',           city:'Bridgewatch',   cat:'DAGGER'      },
-    { id:'MAIN_ARCANESTAFF',   mat:'PLANKS',   qty:[16,20,24,28,32], label:'Cajado Arcano',   city:'Lymhurst',      cat:'ARCANE'      },
-    { id:'MAIN_FIRESTAFF',     mat:'PLANKS',   qty:[16,20,24,28,32], label:'Cajado Fogo',     city:'Thetford',      cat:'FIRE'        },
-    { id:'MAIN_HOLYSTAFF',     mat:'PLANKS',   qty:[16,20,24,28,32], label:'Cajado Sagrado',  city:'Fort Sterling', cat:'HOLY'        },
-    { id:'MAIN_CROSSBOW',      mat:'PLANKS',   qty:[16,20,24,28,32], label:'Besta',           city:'Bridgewatch',   cat:'CROSSBOW'    },
-    // 2H — 20 mats
-    { id:'2H_HAMMER',          mat:'METALBAR', qty:[20,24,28,32,36], label:'Martelo 2H',      city:'Fort Sterling', cat:'HAMMER'      },
-    { id:'2H_QUARTERSTAFF',    mat:'PLANKS',   qty:[20,24,28,32,36], label:'Bastão',          city:'Martlock',      cat:'QUARTERSTAFF'},
-    { id:'2H_BOW',             mat:'PLANKS',   qty:[20,24,28,32,36], label:'Arco',            city:'Lymhurst',      cat:'BOW'         },
-    { id:'2H_CURSEDSTAFF',     mat:'PLANKS',   qty:[20,24,28,32,36], label:'Cajado Amaldiç.', city:'Bridgewatch',   cat:'CURSED'      },
-    { id:'2H_FROSTSTAFF',      mat:'PLANKS',   qty:[20,24,28,32,36], label:'Cajado Gelo',     city:'Martlock',      cat:'FROST'       },
-    { id:'2H_NATURESTAFF',     mat:'PLANKS',   qty:[20,24,28,32,36], label:'Cajado Natureza', city:'Thetford',      cat:'NATURE'      },
-    // Armaduras
-    { id:'HEAD_PLATE_SET1',    mat:'METALBAR', qty:[12,15,18,21,24], label:'Elmo Placa',      city:'Fort Sterling', cat:'HEAD_PLATE'  },
-    { id:'ARMOR_PLATE_SET1',   mat:'METALBAR', qty:[16,20,24,28,32], label:'Peitoral Placa',  city:'Bridgewatch',   cat:'ARMOR_PLATE' },
-    { id:'SHOES_PLATE_SET1',   mat:'METALBAR', qty:[12,15,18,21,24], label:'Botas Placa',     city:'Martlock',      cat:'SHOES_PLATE' },
-    { id:'HEAD_LEATHER_SET1',  mat:'LEATHER',  qty:[12,15,18,21,24], label:'Elmo Couro',      city:'Lymhurst',      cat:'HEAD_LEATHER'},
-    { id:'ARMOR_LEATHER_SET1', mat:'LEATHER',  qty:[16,20,24,28,32], label:'Peitoral Couro',  city:'Thetford',      cat:'ARMOR_LEATHER'},
-    { id:'SHOES_LEATHER_SET1', mat:'LEATHER',  qty:[12,15,18,21,24], label:'Sapato Couro',    city:'Lymhurst',      cat:'SHOES_LEATHER'},
-    { id:'HEAD_CLOTH_SET1',    mat:'CLOTH',    qty:[12,15,18,21,24], label:'Elmo Tecido',     city:'Thetford',      cat:'HEAD_CLOTH'  },
-    { id:'ARMOR_CLOTH_SET1',   mat:'CLOTH',    qty:[16,20,24,28,32], label:'Peitoral Tecido', city:'Fort Sterling', cat:'ARMOR_CLOTH' },
-    { id:'SHOES_CLOTH_SET1',   mat:'CLOTH',    qty:[12,15,18,21,24], label:'Sapato Tecido',   city:'Bridgewatch',   cat:'SHOES_CLOTH' },
+    // ── SWORDS
+    {id:'MAIN_SWORD',          mat:'METALBAR',qty:[16,20,24,28,32],cat:'SWORD',       bestCity:'Lymhurst'     },
+    {id:'2H_CLAYMORE',         mat:'METALBAR',qty:[20,24,28,32,36],cat:'SWORD',       bestCity:'Lymhurst'     },
+    {id:'2H_DUALSWORD',        mat:'METALBAR',qty:[20,24,28,32,36],cat:'SWORD',       bestCity:'Lymhurst'     },
+    // ── AXES
+    {id:'MAIN_AXE',            mat:'METALBAR',qty:[16,20,24,28,32],cat:'AXE',         bestCity:'Martlock'     },
+    {id:'2H_AXE',              mat:'METALBAR',qty:[20,24,28,32,36],cat:'AXE',         bestCity:'Martlock'     },
+    // ── MACES / HAMMERS
+    {id:'MAIN_MACE',           mat:'METALBAR',qty:[16,20,24,28,32],cat:'MACE',        bestCity:'Thetford'     },
+    {id:'MAIN_HAMMER',         mat:'METALBAR',qty:[16,20,24,28,32],cat:'HAMMER',      bestCity:'Fort Sterling'},
+    {id:'2H_FLAIL',            mat:'METALBAR',qty:[20,24,28,32,36],cat:'MACE',        bestCity:'Thetford'     },
+    {id:'2H_HAMMER',           mat:'METALBAR',qty:[20,24,28,32,36],cat:'HAMMER',      bestCity:'Fort Sterling'},
+    {id:'2H_POLEHAMMER',       mat:'METALBAR',qty:[20,24,28,32,36],cat:'HAMMER',      bestCity:'Fort Sterling'},
+    // ── SPEARS
+    {id:'MAIN_SPEAR',          mat:'METALBAR',qty:[16,20,24,28,32],cat:'SPEAR',       bestCity:'Fort Sterling'},
+    {id:'2H_GLAIVE',           mat:'METALBAR',qty:[20,24,28,32,36],cat:'SPEAR',       bestCity:'Fort Sterling'},
+    {id:'2H_HALBERD',          mat:'METALBAR',qty:[20,24,28,32,36],cat:'SPEAR',       bestCity:'Fort Sterling'},
+    // ── DAGGERS
+    {id:'MAIN_DAGGER',         mat:'METALBAR',qty:[16,20,24,28,32],cat:'DAGGER',      bestCity:'Bridgewatch'  },
+    {id:'2H_DAGGERPAIR',       mat:'METALBAR',qty:[20,24,28,32,36],cat:'DAGGER',      bestCity:'Bridgewatch'  },
+    {id:'2H_CLAWPAIR',         mat:'METALBAR',qty:[20,24,28,32,36],cat:'DAGGER',      bestCity:'Bridgewatch'  },
+    // ── QUARTERSTAVES
+    {id:'2H_QUARTERSTAFF',     mat:'PLANKS',  qty:[20,24,28,32,36],cat:'QUARTERSTAFF',bestCity:'Martlock'     },
+    {id:'2H_IRONCLADEDSTAFF',  mat:'PLANKS',  qty:[20,24,28,32,36],cat:'QUARTERSTAFF',bestCity:'Martlock'     },
+    {id:'2H_DOUBLEBLADEDSTAFF',mat:'PLANKS',  qty:[20,24,28,32,36],cat:'QUARTERSTAFF',bestCity:'Martlock'     },
+    // ── BOWS
+    {id:'2H_BOW',              mat:'PLANKS',  qty:[20,24,28,32,36],cat:'BOW',         bestCity:'Lymhurst'     },
+    {id:'2H_WARBOW',           mat:'PLANKS',  qty:[20,24,28,32,36],cat:'BOW',         bestCity:'Lymhurst'     },
+    {id:'2H_LONGBOW',          mat:'PLANKS',  qty:[20,24,28,32,36],cat:'BOW',         bestCity:'Lymhurst'     },
+    // ── CROSSBOWS
+    {id:'MAIN_1HCROSSBOW',     mat:'PLANKS',  qty:[16,20,24,28,32],cat:'CROSSBOW',    bestCity:'Bridgewatch'  },
+    {id:'2H_CROSSBOW',         mat:'PLANKS',  qty:[20,24,28,32,36],cat:'CROSSBOW',    bestCity:'Bridgewatch'  },
+    {id:'2H_CROSSBOWLARGE',    mat:'PLANKS',  qty:[20,24,28,32,36],cat:'CROSSBOW',    bestCity:'Bridgewatch'  },
+    // ── ARCANE STAFFS
+    {id:'MAIN_ARCANESTAFF',    mat:'PLANKS',  qty:[16,20,24,28,32],cat:'ARCANE',      bestCity:'Lymhurst'     },
+    {id:'2H_ARCANESTAFF',      mat:'PLANKS',  qty:[20,24,28,32,36],cat:'ARCANE',      bestCity:'Lymhurst'     },
+    {id:'2H_ENIGMATICSTAFF',   mat:'PLANKS',  qty:[20,24,28,32,36],cat:'ARCANE',      bestCity:'Lymhurst'     },
+    // ── CURSED STAFFS
+    {id:'MAIN_CURSEDSTAFF',    mat:'PLANKS',  qty:[16,20,24,28,32],cat:'CURSED',      bestCity:'Bridgewatch'  },
+    {id:'2H_CURSEDSTAFF',      mat:'PLANKS',  qty:[20,24,28,32,36],cat:'CURSED',      bestCity:'Bridgewatch'  },
+    {id:'2H_DEMONICSTAFF',     mat:'PLANKS',  qty:[20,24,28,32,36],cat:'CURSED',      bestCity:'Bridgewatch'  },
+    // ── FIRE STAFFS
+    {id:'MAIN_FIRESTAFF',      mat:'PLANKS',  qty:[16,20,24,28,32],cat:'FIRE',        bestCity:'Thetford'     },
+    {id:'2H_FIRESTAFF',        mat:'PLANKS',  qty:[20,24,28,32,36],cat:'FIRE',        bestCity:'Thetford'     },
+    {id:'2H_INFERNOSTAFF',     mat:'PLANKS',  qty:[20,24,28,32,36],cat:'FIRE',        bestCity:'Thetford'     },
+    // ── FROST STAFFS
+    {id:'MAIN_FROSTSTAFF',     mat:'PLANKS',  qty:[16,20,24,28,32],cat:'FROST',       bestCity:'Martlock'     },
+    {id:'2H_FROSTSTAFF',       mat:'PLANKS',  qty:[20,24,28,32,36],cat:'FROST',       bestCity:'Martlock'     },
+    {id:'2H_GLACIALSTAFF',     mat:'PLANKS',  qty:[20,24,28,32,36],cat:'FROST',       bestCity:'Martlock'     },
+    // ── HOLY STAFFS
+    {id:'MAIN_HOLYSTAFF',      mat:'PLANKS',  qty:[16,20,24,28,32],cat:'HOLY',        bestCity:'Fort Sterling'},
+    {id:'2H_HOLYSTAFF',        mat:'PLANKS',  qty:[20,24,28,32,36],cat:'HOLY',        bestCity:'Fort Sterling'},
+    {id:'2H_DIVINESTAFF',      mat:'PLANKS',  qty:[20,24,28,32,36],cat:'HOLY',        bestCity:'Fort Sterling'},
+    // ── NATURE STAFFS
+    {id:'MAIN_NATURESTAFF',    mat:'PLANKS',  qty:[16,20,24,28,32],cat:'NATURE',      bestCity:'Thetford'     },
+    {id:'2H_NATURESTAFF',      mat:'PLANKS',  qty:[20,24,28,32,36],cat:'NATURE',      bestCity:'Thetford'     },
+    {id:'2H_WILDSTAFF',        mat:'PLANKS',  qty:[20,24,28,32,36],cat:'NATURE',      bestCity:'Thetford'     },
+    // ── WAR GLOVES
+    {id:'2H_KNUCKLES_SET1',    mat:'METALBAR',qty:[20,24,28,32,36],cat:'WAR_GLOVES',  bestCity:'Caerleon'     },
+    {id:'2H_KNUCKLES_SET2',    mat:'METALBAR',qty:[20,24,28,32,36],cat:'WAR_GLOVES',  bestCity:'Caerleon'     },
+    {id:'2H_KNUCKLES_SET3',    mat:'METALBAR',qty:[20,24,28,32,36],cat:'WAR_GLOVES',  bestCity:'Caerleon'     },
+    // ── PLATE ARMOR (SET1, SET2, SET3)
+    {id:'HEAD_PLATE_SET1',     mat:'METALBAR',qty:[12,15,18,21,24],cat:'HEAD_PLATE',  bestCity:'Fort Sterling'},
+    {id:'ARMOR_PLATE_SET1',    mat:'METALBAR',qty:[16,20,24,28,32],cat:'ARMOR_PLATE', bestCity:'Bridgewatch'  },
+    {id:'SHOES_PLATE_SET1',    mat:'METALBAR',qty:[12,15,18,21,24],cat:'SHOES_PLATE', bestCity:'Martlock'     },
+    {id:'HEAD_PLATE_SET2',     mat:'METALBAR',qty:[12,15,18,21,24],cat:'HEAD_PLATE',  bestCity:'Fort Sterling'},
+    {id:'ARMOR_PLATE_SET2',    mat:'METALBAR',qty:[16,20,24,28,32],cat:'ARMOR_PLATE', bestCity:'Bridgewatch'  },
+    {id:'SHOES_PLATE_SET2',    mat:'METALBAR',qty:[12,15,18,21,24],cat:'SHOES_PLATE', bestCity:'Martlock'     },
+    {id:'HEAD_PLATE_SET3',     mat:'METALBAR',qty:[12,15,18,21,24],cat:'HEAD_PLATE',  bestCity:'Fort Sterling'},
+    {id:'ARMOR_PLATE_SET3',    mat:'METALBAR',qty:[16,20,24,28,32],cat:'ARMOR_PLATE', bestCity:'Bridgewatch'  },
+    {id:'SHOES_PLATE_SET3',    mat:'METALBAR',qty:[12,15,18,21,24],cat:'SHOES_PLATE', bestCity:'Martlock'     },
+    // ── LEATHER ARMOR (SET1, SET2, SET3)
+    {id:'HEAD_LEATHER_SET1',   mat:'LEATHER', qty:[12,15,18,21,24],cat:'HEAD_LEATHER',bestCity:'Lymhurst'     },
+    {id:'ARMOR_LEATHER_SET1',  mat:'LEATHER', qty:[16,20,24,28,32],cat:'ARMOR_LEATHER',bestCity:'Thetford'   },
+    {id:'SHOES_LEATHER_SET1',  mat:'LEATHER', qty:[12,15,18,21,24],cat:'SHOES_LEATHER',bestCity:'Lymhurst'   },
+    {id:'HEAD_LEATHER_SET2',   mat:'LEATHER', qty:[12,15,18,21,24],cat:'HEAD_LEATHER',bestCity:'Lymhurst'     },
+    {id:'ARMOR_LEATHER_SET2',  mat:'LEATHER', qty:[16,20,24,28,32],cat:'ARMOR_LEATHER',bestCity:'Thetford'   },
+    {id:'SHOES_LEATHER_SET2',  mat:'LEATHER', qty:[12,15,18,21,24],cat:'SHOES_LEATHER',bestCity:'Lymhurst'   },
+    {id:'HEAD_LEATHER_SET3',   mat:'LEATHER', qty:[12,15,18,21,24],cat:'HEAD_LEATHER',bestCity:'Lymhurst'     },
+    {id:'ARMOR_LEATHER_SET3',  mat:'LEATHER', qty:[16,20,24,28,32],cat:'ARMOR_LEATHER',bestCity:'Thetford'   },
+    {id:'SHOES_LEATHER_SET3',  mat:'LEATHER', qty:[12,15,18,21,24],cat:'SHOES_LEATHER',bestCity:'Lymhurst'   },
+    // ── CLOTH ARMOR (SET1, SET2, SET3)
+    {id:'HEAD_CLOTH_SET1',     mat:'CLOTH',   qty:[12,15,18,21,24],cat:'HEAD_CLOTH',  bestCity:'Thetford'     },
+    {id:'ARMOR_CLOTH_SET1',    mat:'CLOTH',   qty:[16,20,24,28,32],cat:'ARMOR_CLOTH', bestCity:'Fort Sterling'},
+    {id:'SHOES_CLOTH_SET1',    mat:'CLOTH',   qty:[12,15,18,21,24],cat:'SHOES_CLOTH', bestCity:'Bridgewatch'  },
+    {id:'HEAD_CLOTH_SET2',     mat:'CLOTH',   qty:[12,15,18,21,24],cat:'HEAD_CLOTH',  bestCity:'Thetford'     },
+    {id:'ARMOR_CLOTH_SET2',    mat:'CLOTH',   qty:[16,20,24,28,32],cat:'ARMOR_CLOTH', bestCity:'Fort Sterling'},
+    {id:'SHOES_CLOTH_SET2',    mat:'CLOTH',   qty:[12,15,18,21,24],cat:'SHOES_CLOTH', bestCity:'Bridgewatch'  },
+    {id:'HEAD_CLOTH_SET3',     mat:'CLOTH',   qty:[12,15,18,21,24],cat:'HEAD_CLOTH',  bestCity:'Thetford'     },
+    {id:'ARMOR_CLOTH_SET3',    mat:'CLOTH',   qty:[16,20,24,28,32],cat:'ARMOR_CLOTH', bestCity:'Fort Sterling'},
+    {id:'SHOES_CLOTH_SET3',    mat:'CLOTH',   qty:[12,15,18,21,24],cat:'SHOES_CLOTH', bestCity:'Bridgewatch'  },
   ];
 
   // ── Refino BOM real ─────────────────────────────
@@ -82,6 +146,22 @@ const MarketModule = (() => {
 
   const RAW_IDS      = ['ORE','HIDE','FIBER','WOOD','ROCK'];
   const REFINED_IDS  = ['METALBAR','LEATHER','CLOTH','PLANKS','STONEBLOCK'];
+
+  // ── Nome oficial do item ─────────────────────────
+  function getItemName(itemId) {
+    if (!itemId) return itemId;
+    // Remove enchant suffix
+    const base = itemId.replace(/@\d$/, '');
+    // Try exact match
+    if (typeof ITEM_NAMES !== 'undefined') {
+      if (ITEM_NAMES[base]) return ITEM_NAMES[base];
+      // Try with T4 prefix (names are tier-independent)
+      const t4key = base.replace(/^T\d_/, 'T4_');
+      if (ITEM_NAMES[t4key]) return ITEM_NAMES[t4key];
+    }
+    // Fallback: clean up the ID
+    return base.replace(/^T\d_/, '').replace(/_/g, ' ');
+  }
 
   // ── Helpers ─────────────────────────────────────
   function fmt(n) {
@@ -160,6 +240,44 @@ const MarketModule = (() => {
     return results;
   }
 
+  // Fetch history (avg_price + item_count) for top candidates
+  async function fetchHistory(itemIds, cities) {
+    const histMap = {}; // key: "itemId:city" → {avgPrice, volume}
+    const unique  = [...new Set(itemIds)];
+    const chunks  = [];
+    for (let i = 0; i < unique.length; i += 20) chunks.push(unique.slice(i, i+20));
+
+    for (const chunk of chunks) {
+      for (const city of cities) {
+        try {
+          const url  = `${API.MARKET}/history/${chunk.join(',')}.json?locations=${city}&time-scale=24&qualities=1`;
+          const data = await fetch(url).then(r => r.json());
+          if (!Array.isArray(data)) continue;
+          for (const row of data) {
+            if (!row.data?.length) continue;
+            const recent = row.data.slice(-3); // last 3 data points (last 72h)
+            const avgPrice = recent.reduce((s,d) => s + d.avg_price, 0) / recent.length;
+            const volume   = recent.reduce((s,d) => s + d.item_count, 0);
+            histMap[`${row.item_id}:${row.location}`] = { avgPrice: Math.round(avgPrice), volume };
+          }
+        } catch(e) { /* silent */ }
+      }
+    }
+    return histMap;
+  }
+
+  // Get weighted price: avg×0.5 + min×0.3 + max×0.2
+  function wPrice(min, max, avg) {
+    if (!avg || avg <= 0) avg = min;
+    return Math.round(avg * 0.5 + min * 0.3 + max * 0.2);
+  }
+
+  // Spread: (max-min)/avg × 100
+  function calcSpread(min, max, avg) {
+    if (!avg || avg <= 0 || !min) return 999;
+    return ((max - min) / avg) * 100;
+  }
+
   // ── Loading UI ──────────────────────────────────
   function setLoading(tbodyId, cols) {
     const el = document.getElementById(tbodyId);
@@ -177,8 +295,140 @@ const MarketModule = (() => {
   // TAB 1 — RANK CRAFT
   // ═══════════════════════════════════════════════
   async function loadCraft() {
-    setLoading('market-craft-tbody', 10);
+    setLoading('market-craft-tbody', 13);
     const tiers = state.filterTier;
+
+    const ids = [];
+    for (const item of CRAFT_ITEMS) {
+      for (const t of tiers) {
+        ids.push(`T${t}_${item.id}`, `T${t}_${item.mat}`);
+        for (const e of [1,2,3]) ids.push(`T${t}_${item.id}@${e}`);
+      }
+    }
+
+    try {
+      const prices = await fetchPrices([...new Set(ids)], ALL_CITIES);
+
+      // Collect top candidates first (quick pass)
+      const candidates = [];
+      for (const item of CRAFT_ITEMS) {
+        for (const tier of tiers) {
+          const ti = TIERS_IDX.indexOf(tier);
+          if (ti < 0) continue;
+
+          for (const enchant of [0,1,2,3]) {
+            const eSfx   = enchant > 0 ? `@${enchant}` : '';
+            const itemId = `T${tier}_${item.id}${eSfx}`;
+            const matId  = `T${tier}_${item.mat}`;
+
+            const matRow  = bestBuyRow(prices, matId);
+            if (!matRow || !matRow.sell_price_min) continue;
+
+            const sellRow = bestSellRow(prices, itemId);
+            if (!sellRow || !sellRow.buy_price_max) continue;
+
+            candidates.push({ item, tier, ti, enchant, itemId, matId, matRow, sellRow });
+          }
+        }
+      }
+
+      // Fetch history for top item IDs only (limit API calls)
+      const topItemIds = [...new Set(candidates.map(c => c.itemId))].slice(0, 60);
+      const topMatIds  = [...new Set(candidates.map(c => c.matId))].slice(0, 20);
+      const hist = await fetchHistory([...topItemIds, ...topMatIds], ROYAL_CITIES.slice(0,5));
+
+      const results = [];
+      for (const c of candidates) {
+        const { item, tier, ti, enchant, itemId, matId, matRow, sellRow } = c;
+        const qty = item.qty[ti];
+
+        // Material price detail
+        const matMin   = matRow.sell_price_min;
+        const matMax   = matRow.sell_price_max || matMin;
+        const matHist  = hist[`${matId}:${matRow.city}`] || {};
+        const matAvg   = matHist.avgPrice || matMin;
+        const matVol   = matHist.volume   || 0;
+        const matSprd  = calcSpread(matMin, matMax, matAvg);
+        const matWP    = wPrice(matMin, matMax, matAvg);
+
+        // Sell price detail
+        const sellMin  = sellRow.sell_price_min || sellRow.buy_price_max;
+        const sellMax  = sellRow.sell_price_max || sellRow.buy_price_max;
+        const sellHist = hist[`${itemId}:${sellRow.city}`] || {};
+        const sellAvg  = sellHist.avgPrice || sellRow.buy_price_max;
+        const sellVol  = sellHist.volume   || 0;
+        const sellSprd = calcSpread(sellMin, sellMax, sellAvg);
+        const sellWP   = wPrice(sellRow.buy_price_max, sellMax, sellAvg);
+
+        const matCost  = matWP * qty;
+        const { profit, margin, rrr } = calcProfit(
+          sellWP, matCost, item.bestCity, item.cat, false, state.useFocus
+        );
+
+        // Score: weight profit by volume and stability
+        const volScore  = Math.min(sellVol / 30, 1);
+        const stabScore = sellSprd < 40 ? 1 : 0.5;
+        const score     = calcScore(profit / (W.item[tier] || 13.6), sellVol, sellSprd);
+
+        results.push({
+          itemId, matId, tier, enchant,
+          name: getItemName(itemId),
+          matName: getItemName(matId),
+          craftCity: item.bestCity,
+          matCity: matRow.city, matMin, matMax, matAvg, matVol, matSprd, matWP,
+          sellCity: sellRow.city, sellMin, sellMax, sellAvg, sellVol, sellSprd, sellWP,
+          matCost, profit, margin, rrr, score,
+          img: AlbionAPI.itemImageUrl(itemId),
+        });
+      }
+
+      results.sort((a,b) => b.profit - a.profit);
+      const tbody = document.getElementById('market-craft-tbody');
+      if (!tbody) return;
+
+      if (!results.length) {
+        tbody.innerHTML = `<tr><td colspan="13" style="text-align:center;padding:24px;color:var(--text-muted);">Nenhum item lucrativo nos tiers selecionados.</td></tr>`;
+        return;
+      }
+
+      tbody.innerHTML = results.slice(0,100).map((r,i) => {
+        const enchStr = r.enchant > 0 ? ` .${r.enchant}` : '';
+        return `
+        <tr>
+          <td class="rank${i===0?' top1':''}">${i+1}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <img src="${r.img}" width="28" height="28" style="border-radius:3px;background:var(--surface-3);" onerror="this.style.display='none'">
+              <div>
+                <div class="item-name">T${r.tier}${enchStr} ${r.name}</div>
+                <div class="item-sub">Craft: ${r.craftCity} · RRR ${(r.rrr*100).toFixed(1)}%</div>
+              </div>
+            </div>
+          </td>
+          <td style="font-size:10px;color:var(--text-2);">${r.matCity}</td>
+          <td class="right" style="font-size:11px;">
+            <div style="color:var(--green);">${fmt(r.matMin)}</div>
+            <div style="color:var(--text-muted);font-size:9px;">${fmt(r.matAvg)} avg · ${fmt(r.matMax)} max</div>
+          </td>
+          <td class="right" style="font-size:10px;">${spreadBadge(r.matSprd)}</td>
+          <td class="right">${liqBadge(r.matVol)}</td>
+          <td class="right muted">${fmt(r.matCost)}</td>
+          <td style="font-size:10px;color:var(--text-2);">${r.sellCity}</td>
+          <td class="right" style="font-size:11px;">
+            <div style="color:var(--gold);">${fmt(r.sellWP)}</div>
+            <div style="color:var(--text-muted);font-size:9px;">${fmt(r.sellAvg)} avg · ${fmt(r.sellMax)} max</div>
+          </td>
+          <td class="right" style="font-size:10px;">${spreadBadge(r.sellSprd)}</td>
+          <td class="right">${liqBadge(r.sellVol)}</td>
+          <td class="right" style="color:${r.profit>=0?'var(--gold)':'var(--red)'};font-weight:700;">${fmt(r.profit)}</td>
+          <td class="right"><span class="badge ${r.margin>=0?'green':'red'}">${fmtPct(r.margin)}</span></td>
+        </tr>`;
+      }).join('');
+    } catch(e) {
+      console.error(e);
+      setError('market-craft-tbody', 13, 'Erro: ' + e.message);
+    }
+  }
 
     const ids = [];
     for (const item of CRAFT_ITEMS) {
@@ -459,6 +709,126 @@ const MarketModule = (() => {
   // TAB 4 — RANK TRANSPORTE
   // ═══════════════════════════════════════════════
   async function loadTransport() {
+    setLoading('market-transport-tbody', 17);
+    const tiers = state.filterTier;
+    const mount = MOUNTS.find(m => m.id === state.mount) || MOUNTS[3];
+    const ids   = [];
+
+    for (const t of tiers) {
+      for (const r of RAW_IDS)     ids.push(`T${t}_${r}`);
+      for (const r of REFINED_IDS) ids.push(`T${t}_${r}`);
+      for (const item of CRAFT_ITEMS) ids.push(`T${t}_${item.id}`);
+    }
+
+    try {
+      const prices  = await fetchPrices([...new Set(ids)], ROYAL_CITIES);
+      const results = [];
+      const unique  = [...new Set(ids)];
+
+      for (const itemId of unique) {
+        const tier = parseInt(itemId.match(/T(\d)/)?.[1] || '6');
+        const rows  = prices.filter(p => p.item_id === itemId);
+        if (rows.length < 2) continue;
+
+        const buyRows  = rows.filter(p => p.sell_price_min > 0).sort((a,b) => a.sell_price_min - b.sell_price_min);
+        const sellRows = rows.filter(p => p.buy_price_max  > 0).sort((a,b) => b.buy_price_max  - a.buy_price_max);
+        if (!buyRows.length || !sellRows.length) continue;
+
+        const buy  = buyRows[0];
+        const sell = sellRows[0];
+        if (buy.city === sell.city) continue;
+
+        const buyMin = buy.sell_price_min;
+        const buyMax = buy.sell_price_max || buyMin;
+        const buyAvg = buyMin; // will enrich with history if needed
+
+        const sellMax = sell.sell_price_max || sell.buy_price_max;
+        const sellMin = sell.sell_price_min || sell.buy_price_max;
+        const sellAvg = sell.buy_price_max;
+
+        const profit = sellAvg * 0.97 - buyMin;
+        if (profit <= 0) continue;
+
+        const buySprd  = calcSpread(buyMin, buyMax, buyAvg);
+        const sellSprd = calcSpread(sellMin, sellMax, sellAvg);
+        if (buySprd > 200 || sellSprd > 200) continue;
+
+        const spread = ((sellAvg - buyMin) / buyMin) * 100;
+        if (spread < 5) continue;
+
+        const weight     = itemWeight(itemId, tier);
+        const ppkg       = profit / weight;
+        const perTrip    = Math.floor(mount.cap / weight);
+        const tripProfit = profit * perTrip;
+
+        results.push({
+          itemId, tier,
+          name: getItemName(itemId),
+          buyCity: buy.city, buyMin, buyMax, buyAvg, buySprd, buyVol: 0,
+          sellCity: sell.city, sellMin, sellMax, sellAvg, sellSprd, sellVol: 0,
+          profit, ppkg, weight, perTrip, tripProfit,
+          img: AlbionAPI.itemImageUrl(itemId),
+        });
+      }
+
+      results.sort((a,b) => b.tripProfit - a.tripProfit);
+      const top = results.slice(0, 100);
+
+      // Enrich top results with history
+      const histIds = [...new Set(top.map(r => r.itemId))];
+      const hist = await fetchHistory(histIds, ROYAL_CITIES.slice(0,5));
+      for (const r of top) {
+        const bh = hist[`${r.itemId}:${r.buyCity}`]  || {};
+        const sh = hist[`${r.itemId}:${r.sellCity}`] || {};
+        if (bh.avgPrice) r.buyAvg  = bh.avgPrice;
+        if (sh.avgPrice) r.sellAvg = sh.avgPrice;
+        r.buyVol  = bh.volume || 0;
+        r.sellVol = sh.volume || 0;
+        r.buySprd  = calcSpread(r.buyMin,  r.buyMax,  r.buyAvg);
+        r.sellSprd = calcSpread(r.sellMin, r.sellMax, r.sellAvg);
+        // Recalc with better prices
+        r.profit     = r.sellAvg * 0.97 - r.buyMin;
+        r.perTrip    = Math.floor(mount.cap / r.weight);
+        r.tripProfit = r.profit * r.perTrip;
+      }
+      top.sort((a,b) => b.tripProfit - a.tripProfit);
+
+      const tbody = document.getElementById('market-transport-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = top.map((r,i) => `
+      <tr>
+        <td class="rank${i===0?' top1':''}">${i+1}</td>
+        <td>
+          <div style="display:flex;align-items:center;gap:8px;">
+            <img src="${r.img}" width="28" height="28" style="border-radius:3px;background:var(--surface-3);" onerror="this.style.display='none'">
+            <div>
+              <div class="item-name">T${r.tier} ${r.name}</div>
+              <div class="item-sub">${r.weight}kg · ${r.perTrip} unid/${mount.label}</div>
+            </div>
+          </div>
+        </td>
+        <td><span class="badge teal" style="font-size:9px;">${r.buyCity}</span></td>
+        <td class="right" style="color:var(--green);font-size:11px;">${fmt(r.buyMin)}</td>
+        <td class="right" style="color:var(--text-2);font-size:11px;">${fmt(r.buyAvg)}</td>
+        <td class="right muted">${fmt(r.buyMax)}</td>
+        <td>${spreadBadge(r.buySprd)}</td>
+        <td>${liqBadge(r.buyVol)}</td>
+        <td><span class="badge teal" style="font-size:9px;">${r.sellCity}</span></td>
+        <td class="right" style="color:var(--green);font-size:11px;">${fmt(r.sellMin)}</td>
+        <td class="right" style="color:var(--text-2);font-size:11px;">${fmt(r.sellAvg)}</td>
+        <td class="right muted">${fmt(r.sellMax)}</td>
+        <td>${spreadBadge(r.sellSprd)}</td>
+        <td>${liqBadge(r.sellVol)}</td>
+        <td class="right" style="color:var(--teal);font-weight:700;">${fmt(r.profit)}</td>
+        <td class="right" style="font-size:11px;color:var(--text-muted);">${fmt(r.ppkg)}/kg</td>
+        <td class="right" style="color:var(--gold);font-weight:700;">${fmt(r.tripProfit)}</td>
+      </tr>`).join('') || `<tr><td colspan="17" style="text-align:center;padding:24px;color:var(--text-muted);">Nenhuma rota lucrativa.</td></tr>`;
+    } catch(e) {
+      console.error(e);
+      setError('market-transport-tbody', 17, 'Erro: ' + e.message);
+    }
+  }
     setLoading('market-transport-tbody', 11);
     const tiers = state.filterTier;
     const mount = MOUNTS.find(m => m.id === state.mount) || MOUNTS[3];
@@ -549,6 +919,113 @@ const MarketModule = (() => {
   // TAB 5 — BLACK MARKET
   // ═══════════════════════════════════════════════
   async function loadBlackMarket() {
+    setLoading('market-bm-tbody', 12);
+    const tiers = state.filterTier;
+    const mount = MOUNTS.find(m => m.id === state.mount) || MOUNTS[3];
+    const ids   = [];
+
+    for (const item of CRAFT_ITEMS) {
+      for (const t of tiers) {
+        ids.push(`T${t}_${item.id}`);
+        for (const e of [1,2,3]) ids.push(`T${t}_${item.id}@${e}`);
+      }
+    }
+
+    try {
+      const prices  = await fetchPrices([...new Set(ids)], [...ROYAL_CITIES, 'Black Market']);
+      const results = [];
+
+      for (const item of CRAFT_ITEMS) {
+        for (const tier of tiers) {
+          const ti = TIERS_IDX.indexOf(tier);
+          if (ti < 0) continue;
+
+          for (const enchant of [0,1,2,3]) {
+            const eSfx   = enchant > 0 ? `@${enchant}` : '';
+            const itemId = `T${tier}_${item.id}${eSfx}`;
+
+            const royalRows = prices
+              .filter(p => p.item_id === itemId && p.sell_price_min > 0 && p.city !== 'Black Market')
+              .sort((a,b) => a.sell_price_min - b.sell_price_min);
+            if (!royalRows.length) continue;
+
+            const bmRow = prices.find(p => p.item_id === itemId && p.city === 'Black Market' && p.buy_price_max > 0);
+            if (!bmRow) continue;
+
+            const cheapest = royalRows[0];
+            const buyMin   = cheapest.sell_price_min;
+            const buyMax   = cheapest.sell_price_max || buyMin;
+            const buyAvg   = buyMin;
+            const buySprd  = calcSpread(buyMin, buyMax, buyAvg);
+
+            const bmPrice  = bmRow.buy_price_max;
+            const netBM    = bmPrice * 0.97;
+            const profit   = netBM - buyMin;
+            if (profit <= 0) continue;
+
+            const margin    = (profit / buyMin) * 100;
+            const weight    = W.item[tier] || 13.6;
+            const perTrip   = Math.floor(mount.cap / weight);
+            const tripProfit = profit * perTrip;
+
+            results.push({
+              itemId, tier, enchant,
+              name: getItemName(itemId),
+              buyCity: cheapest.city, buyMin, buyMax, buyAvg, buySprd, buyVol: 0,
+              bmPrice, netBM, profit, margin, weight, perTrip, tripProfit,
+              img: AlbionAPI.itemImageUrl(itemId),
+            });
+          }
+        }
+      }
+
+      results.sort((a,b) => b.tripProfit - a.tripProfit);
+      const top = results.slice(0, 100);
+
+      // Enrich with history
+      const histIds = [...new Set(top.map(r => r.itemId))];
+      const hist = await fetchHistory(histIds, ROYAL_CITIES.slice(0,4));
+      for (const r of top) {
+        const bh = hist[`${r.itemId}:${r.buyCity}`] || {};
+        if (bh.avgPrice) r.buyAvg = bh.avgPrice;
+        r.buyVol  = bh.volume || 0;
+        r.buySprd = calcSpread(r.buyMin, r.buyMax, r.buyAvg);
+      }
+
+      const tbody = document.getElementById('market-bm-tbody');
+      if (!tbody) return;
+
+      tbody.innerHTML = top.map((r,i) => {
+        const enchStr = r.enchant > 0 ? `.${r.enchant}` : '';
+        return `
+        <tr>
+          <td class="rank${i===0?' top1':''}">${i+1}</td>
+          <td>
+            <div style="display:flex;align-items:center;gap:8px;">
+              <img src="${r.img}" width="28" height="28" style="border-radius:3px;background:var(--surface-3);" onerror="this.style.display='none'">
+              <div>
+                <div class="item-name">T${r.tier}${enchStr} ${r.name}</div>
+                <div class="item-sub">${r.weight}kg · ${r.perTrip} unid/${mount.label}</div>
+              </div>
+            </div>
+          </td>
+          <td><span class="badge teal" style="font-size:9px;">${r.buyCity}</span></td>
+          <td class="right" style="color:var(--green);font-size:11px;">${fmt(r.buyMin)}</td>
+          <td class="right" style="color:var(--text-2);font-size:11px;">${fmt(r.buyAvg)}</td>
+          <td class="right muted">${fmt(r.buyMax)}</td>
+          <td>${spreadBadge(r.buySprd)}</td>
+          <td>${liqBadge(r.buyVol)}</td>
+          <td><span class="badge red" style="font-size:9px;">Black Market</span></td>
+          <td class="right" style="color:var(--gold);font-weight:700;">${fmt(r.profit)}</td>
+          <td class="right"><span class="badge ${r.margin>=0?'green':'red'}">${fmtPct(r.margin)}</span></td>
+          <td class="right" style="color:var(--green);font-weight:700;">${fmt(r.tripProfit)}</td>
+        </tr>`;
+      }).join('') || `<tr><td colspan="12" style="text-align:center;padding:24px;color:var(--text-muted);">Black Market sem oportunidades.</td></tr>`;
+    } catch(e) {
+      console.error(e);
+      setError('market-bm-tbody', 12, 'Erro: ' + e.message);
+    }
+  }
     setLoading('market-bm-tbody', 10);
     const tiers = state.filterTier;
     const mount = MOUNTS.find(m => m.id === state.mount) || MOUNTS[3];
@@ -668,11 +1145,11 @@ const MarketModule = (() => {
     ];
 
     const tableHeaders = {
-      craft:     `<th>#</th><th>Item</th><th>Mat. cidade</th><th class="right">Preço mat.</th><th class="right">Custo total</th><th>Vender em</th><th class="right">Preço venda</th><th class="right teal">Lucro</th><th class="right">Margem</th><th class="right">Lucro/kg</th>`,
-      refine:    `<th>#</th><th>Material</th><th>Raw cidade</th><th class="right">Preço raw</th><th class="right">Qtd+sub</th><th class="right">Custo total</th><th>Vender em</th><th class="right">Preço venda</th><th class="right teal">Lucro</th><th class="right">Margem</th>`,
-      enchant:   `<th>#</th><th>Item + Passo</th><th>Comprar em</th><th class="right">Preço item</th><th>Mat. cidade</th><th class="right">Custo mat.</th><th class="right">Custo total</th><th>Vender em</th><th class="right teal">Lucro</th><th class="right">Margem</th>`,
-      transport: `<th>#</th><th>Item</th><th>Comprar em</th><th class="right">Preço</th><th>Vender em</th><th class="right">Preço</th><th class="right teal">Lucro/unid</th><th class="right">Lucro/kg</th><th class="right">Lucro/viagem</th><th class="right">Spread</th><th>Score</th>`,
-      bm:        `<th>#</th><th>Item</th><th>Comprar em</th><th class="right">Preço</th><th>Destino</th><th class="right">BM paga</th><th class="right teal">Lucro/unid</th><th class="right">Margem</th><th class="right">Lucro/viagem</th><th>Score</th>`,
+      craft:     `<th>#</th><th>Item</th><th>Mat. cidade</th><th class="right">Mat. Min/Avg/Max</th><th>Spread</th><th>Volume</th><th class="right">Custo total</th><th>Vender em</th><th class="right teal">Venda Min/Avg/Max</th><th>Spread</th><th>Volume</th><th class="right gold">Lucro</th><th class="right">Margem</th>`,
+      refine:    `<th>#</th><th>Material</th><th>Raw cidade</th><th class="right">Raw Min/Avg/Max</th><th>Spread</th><th>Volume</th><th class="right">Custo total</th><th>Vender em</th><th class="right teal">Venda Min/Avg/Max</th><th>Spread</th><th>Volume</th><th class="right gold">Lucro</th><th class="right">Margem</th>`,
+      enchant:   `<th>#</th><th>Item + Passo</th><th>Comprar em</th><th class="right">Preço item</th><th>Mat. cidade</th><th class="right">Custo mat.</th><th class="right">Custo total</th><th>Vender em</th><th class="right teal">Venda Avg</th><th>Volume</th><th class="right gold">Lucro</th><th class="right">Margem</th>`,
+      transport: `<th>#</th><th>Item</th><th>Comprar em</th><th class="right">Min</th><th class="right">Avg</th><th class="right">Max</th><th>Spread</th><th>Vol</th><th>Vender em</th><th class="right">Min</th><th class="right">Avg</th><th class="right">Max</th><th>Spread</th><th>Vol</th><th class="right teal">Lucro/unid</th><th class="right">Lucro/kg</th><th class="right gold">Lucro/viagem</th>`,
+      bm:        `<th>#</th><th>Item</th><th>Comprar em</th><th class="right">Min</th><th class="right">Avg</th><th class="right">Max</th><th>Spread</th><th>Vol</th><th>BM paga</th><th class="right teal">Lucro/unid</th><th class="right">Margem</th><th class="right gold">Lucro/viagem</th>`,
     };
 
     el.innerHTML = `
