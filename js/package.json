@@ -1,0 +1,20 @@
+{
+  "name": "albion-squire-bot",
+  "version": "1.0.0",
+  "description": "Albion Squire Discord Bot",
+  "main": "bot.js",
+  "engines": { "node": ">=18" },
+  "scripts": {
+    "start": "node bot.js",
+    "dev":   "nodemon bot.js"
+  },
+  "dependencies": {
+    "discord.js":      "^14.14.1",
+    "firebase-admin":  "^12.0.0",
+    "dotenv":          "^16.4.0",
+    "node-fetch":      "^3.3.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.0"
+  }
+}
