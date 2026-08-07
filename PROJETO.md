@@ -198,7 +198,7 @@ pronto.
 ## 6. Próximos passos (em ordem sugerida)
 
 1. Commitar e enviar as mudanças de multi-tenant pro GitHub
-2. Preencher `GUILD` (nome, `albionId`, `discordServerId`, `webhookUrl`) e
+2. Preencher `GUILD` (nome, `albionId`, `discordServerId`, IDs de canal) e
    `DISCORD_CLIENT_ID` em `config.js`
 3. Limpar lixo: apagar `market.js` da raiz (duplicata idêntica de
    `js/market.js`) e `js/1`

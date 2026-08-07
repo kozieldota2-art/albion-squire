@@ -50,9 +50,12 @@ onde o dono do produto cria novas guildas e distribui login.
 2. Criar bot, copiar o token
 3. Habilitar "Message Content Intent" nas configurações do bot
 4. Convidar o bot com permissões: `Send Messages`, `Embed Links`, `Read Message History`, `Manage Messages`
-5. Criar webhook no canal de mass call
-6. Preencher `DISCORD_CLIENT_ID` em `js/config.js`
-7. Preencher `GUILD_CONFIG` em `js/config.js` com IDs do servidor/canais
+5. Preencher `DISCORD_CLIENT_ID` em `js/config.js`
+6. Preencher `GUILD_CONFIG` em `js/config.js` com IDs do servidor/canais
+
+> Anúncios de mass call no Discord são feitos pelo próprio bot (que já
+> observa o Firebase), não por webhook — isso evita expor qualquer token
+> no navegador, já que `js/config.js` é carregado no site público.
 
 ### 3. Guild Config
 Em `js/config.js`, preencher `GUILD`:

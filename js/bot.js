@@ -458,12 +458,48 @@ client.on("interactionCreate", async interaction => {
   }
 });
 
+// ── Auto-anúncio de mass call criado pelo site ────
+// O site so grava a mass call no Firebase (sem token nenhum exposto
+// no navegador); quem anuncia no canal e o bot, usando o BOT_TOKEN
+// que fica só no servidor. Ignora calls que já têm messageId (essas
+// já foram criadas e anunciadas via /masscall no Discord).
+function watchMassCallsForAnnouncement() {
+  const channelId = process.env.MASS_CALL_CHANNEL_ID;
+  if (!channelId) return;
+
+  db.ref(tenantPath("masscalls"))
+    .orderByChild("createdAt")
+    .startAt(Date.now())
+    .on("child_added", async snap => {
+      const call = snap.val();
+      if (!call || call.messageId) return;
+
+      try {
+        const channel = await client.channels.fetch(channelId);
+        const horario = call.date ? new Date(call.date).toLocaleString("pt-BR") : (call.horario || "A definir");
+        const embed = new EmbedBuilder()
+          .setColor(0x1DA898)
+          .setTitle(`⚔️ MASS CALL — ${call.title || call.titulo}`)
+          .setDescription(`**Tipo:** ${call.type || call.tipo}\n**Horário:** ${horario}\n**Slots:** ${Object.keys(call.composition || {}).length}`)
+          .addFields({ name: "👥 Inscritos", value: "Nenhum ainda" })
+          .setFooter({ text: `Use /join [arma] pra se inscrever · ${process.env.SITE_URL || "https://albiansquire.netlify.app"}` })
+          .setTimestamp();
+
+        const msg = await channel.send({ embeds: [embed] });
+        await db.ref(tenantPath(`masscalls/${snap.key}/messageId`)).set(msg.id);
+      } catch (e) {
+        console.error("Erro ao anunciar mass call criado pelo site:", e);
+      }
+    });
+}
+
 // ── Ready ─────────────────────────────────────────
 client.once("ready", async () => {
   console.log(`\n✓ Albion Squire Bot online como ${client.user.tag}`);
   console.log(`  Servidor: ${process.env.GUILD_ID}`);
   console.log(`  Firebase: ${process.env.FIREBASE_DB_URL}\n`);
   await registerCommands();
+  watchMassCallsForAnnouncement();
 });
 
 client.login(process.env.BOT_TOKEN);

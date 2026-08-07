@@ -66,8 +66,8 @@ const MassCallModule = (() => {
     const db = getDB();
     if (db) {
       await db.ref(tenantPath(`masscalls/${id}`)).set(call);
-      // Enviar webhook pra Discord
-      await sendDiscordAnnouncement(call);
+      // O bot (server-side) detecta o novo registro no Firebase e anuncia
+      // no Discord sozinho — evita expor qualquer token no navegador.
     } else {
       // Modo offline: armazenar localmente
       state.activeCalls.unshift(call);
@@ -76,43 +76,6 @@ const MassCallModule = (() => {
     renderCallDashboard(call);
     renderCallList();
     return call;
-  }
-
-  // ─────────────────────────────────────────────────
-  // DISCORD WEBHOOK ANNOUNCEMENT
-  // ─────────────────────────────────────────────────
-  async function sendDiscordAnnouncement(call) {
-    if (!GUILD.webhookUrl || GUILD.webhookUrl.includes("YOUR_")) return;
-
-    const slotsText = Object.values(call.composition)
-      .reduce((acc, s) => {
-        const key = `${s.role}:${s.weapon}`;
-        acc[key] = (acc[key] || 0) + 1;
-        return acc;
-      }, {});
-
-    const fields = Object.entries(slotsText).map(([key, n]) => {
-      const [role, weapon] = key.split(":");
-      const roleData = ZVZ_ROLES.find(r => r.id === role) || { label: role };
-      return { name: `${roleData.label}`, value: `${weapon} x${n}`, inline: true };
-    });
-
-    const embed = {
-      title:       `⚔️ MASS CALL — ${call.title}`,
-      description: `**Tipo:** ${call.type}\n**Horário:** ${new Date(call.date).toLocaleString("pt-BR")}\n**Slots:** ${Object.keys(call.composition).length}`,
-      color:       0x1DA898,
-      fields,
-      footer:      { text: `Use !join [arma] pra se inscrever · albionsquire.netlify.app` },
-      timestamp:   new Date().toISOString(),
-    };
-
-    try {
-      await fetch(GUILD.webhookUrl, {
-        method:  "POST",
-        headers: { "Content-Type": "application/json" },
-        body:    JSON.stringify({ embeds: [embed] }),
-      });
-    } catch (e) { console.warn("Webhook error:", e); }
   }
 
   // ─────────────────────────────────────────────────

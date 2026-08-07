@@ -35,7 +35,7 @@ function tenantPath(path) {
 }
 
 // ── ⚙️ Discord OAuth ─────────────────────────────────
-const DISCORD_CLIENT_ID   = "YOUR_DISCORD_CLIENT_ID";
+const DISCORD_CLIENT_ID   = "1535123311455895552";
 const DISCORD_REDIRECT    = window.location.origin + "/auth/callback";
 const DISCORD_SCOPE       = "identify guilds";
 
@@ -43,10 +43,9 @@ const DISCORD_SCOPE       = "identify guilds";
 const GUILD = {
   name:                 "S L I C E D",
   albionId:             "H_6bNjI7TUWxzAk2ZlHcEA",
-  discordServerId:      "",
-  massCallChannelId:    "",
-  boardChannelId:       "",
-  webhookUrl:           "",
+  discordServerId:      "690614096680452157",
+  massCallChannelId:    "842175320713986060",
+  boardChannelId:       "842175320713986060",
   guildFeePercent:      10,
   repairFeePercent:     3,
   regearMaxTier:        8,
