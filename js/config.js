@@ -41,8 +41,8 @@ const DISCORD_SCOPE       = "identify guilds";
 
 // ── ⚙️ Guild ─────────────────────────────────────────
 const GUILD = {
-  name:                 "Nome da Guild",
-  albionId:             "",
+  name:                 "S L I C E D",
+  albionId:             "H_6bNjI7TUWxzAk2ZlHcEA",
   discordServerId:      "",
   massCallChannelId:    "",
   boardChannelId:       "",
