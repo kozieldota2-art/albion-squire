@@ -24,13 +24,17 @@ onde o dono do produto cria novas guildas e distribui login.
   Discord OAuth for implementado — até lá, manter o Realtime DB em modo
   teste como já orientado abaixo).
 
-**Falta pra ativar de verdade (próxima fase, não feita ainda):**
+**Login via Discord OAuth: implementado.** `netlify/functions/auth-callback.js`
+troca o `code` do Discord por um token do Firebase com custom claims
+(`tenantId`, `discordId`, `role`) — ver seção "6. Login" abaixo pra configurar
+as variáveis de ambiente.
+
+**Falta pra ativar de verdade (próxima fase):**
 1. Painel master (rota separada, só pro dono) pra criar tenants e gerar login.
-2. Função serverless (Firebase Cloud Functions ou Netlify Functions) pra
-   criar usuário + custom claim `tenantId` — isso não pode rodar no
-   navegador com segurança.
-3. Trocar `firebase.rules.json` de "modo teste" pras regras reais acima.
-4. O bot Discord recebe o tenant via `.env` (`TENANT_ID=nomeguilda`) — hoje
+2. Trocar `firebase.rules.json` de "modo teste" pras regras reais (o arquivo já
+   está pronto — só falta colar no Firebase Console → Realtime Database →
+   Rules → Publish, depois que o login OAuth estiver configurado e testado).
+3. O bot Discord recebe o tenant via `.env` (`TENANT_ID=nomeguilda`) — hoje
    cada bot atende UMA guilda; se quiser um bot só pra todas, precisa de
    outra abordagem (bot multi-servidor mapeando `Discord Server ID → tenantId`).
 
@@ -83,6 +87,45 @@ cp .env.example .env
 npm install
 npm start
 ```
+
+### 6. Login (Discord OAuth)
+
+O login acontece assim: usuário clica em "Entrar" → vai pro Discord autorizar
+→ Discord manda o `code` pra `/auth/callback` → a Netlify Function
+(`netlify/functions/auth-callback.js`) troca esse `code` por um token do
+Firebase e devolve pro site. A troca acontece só no servidor porque precisa
+do `DISCORD_CLIENT_SECRET` e da service account do Firebase — nenhum dos
+dois pode aparecer no navegador.
+
+**1. Discord Developer Portal** ([discord.com/developers/applications](https://discord.com/developers/applications))
+- Na aplicação do bot, aba **OAuth2** → copiar o **Client Secret**
+- Em **Redirects**, adicionar: `https://SEU-SITE.netlify.app/auth/callback`
+
+**2. Firebase**
+- Settings → Service Accounts → **Generate new private key** (baixa um `.json`)
+- Converter esse arquivo pra base64 (não commitar o `.json` em lugar nenhum):
+  ```bash
+  # Linux/Mac
+  base64 -i serviceAccountKey.json | tr -d '\n'
+  # Windows (PowerShell)
+  [Convert]::ToBase64String([IO.File]::ReadAllBytes("serviceAccountKey.json"))
+  ```
+
+**3. Netlify** → Site settings → Environment variables, adicionar:
+
+| Variável | Valor |
+|---|---|
+| `DISCORD_CLIENT_ID` | mesmo valor de `DISCORD_CLIENT_ID` em `js/config.js` |
+| `DISCORD_CLIENT_SECRET` | copiado no passo 1 (segredo) |
+| `DISCORD_REDIRECT_URI` | `https://SEU-SITE.netlify.app/auth/callback` |
+| `DISCORD_GUILD_ID` | mesmo valor de `GUILD.discordServerId` |
+| `DISCORD_BOT_TOKEN` | mesmo token do bot (`BOT_TOKEN` no `.env` do bot) |
+| `OFFICER_ROLE_IDS` | mesmo valor do `.env` do bot |
+| `FIREBASE_SERVICE_ACCOUNT_B64` | base64 gerado no passo 2 (segredo) |
+| `FIREBASE_DB_URL` | mesma URL do `FIREBASE_CONFIG.databaseURL` |
+| `SITE_URL` | `https://SEU-SITE.netlify.app` |
+
+Depois de configurar, novo deploy no Netlify pra aplicar as variáveis.
 
 ---
 

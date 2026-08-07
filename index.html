@@ -560,6 +560,7 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
 
 <!-- ── Scripts ── -->
 <script src="js/config.js"></script>
+<script src="js/auth.js"></script>
 <script src="js/api.js"></script>
 <script src="js/item_names.js"></script>
 <script src="js/craft.js"></script>
@@ -580,6 +581,8 @@ body{background:var(--bg);color:var(--text);font-family:var(--font-ui);font-size
       console.log("✓ Firebase conectado");
     }
   } catch(e) { console.warn("Firebase não configurado:", e.message); }
+
+  AuthModule.init();
 
   // ── Router ─────────────────────────────────────
   const navItems = document.querySelectorAll('.nav-item');

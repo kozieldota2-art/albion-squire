@@ -6,9 +6,15 @@
     X-Content-Type-Options = "nosniff"
 
 [[redirects]]
+  from = "/auth/callback"
+  to   = "/.netlify/functions/auth-callback"
+  status = 200
+
+[[redirects]]
   from = "/*"
   to   = "/index.html"
   status = 200
 
 [build]
-  publish = "."
+  publish   = "."
+  functions = "netlify/functions"

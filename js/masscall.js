@@ -11,7 +11,6 @@ const MassCallModule = (() => {
     activeCalls: [],
     currentCall: null,
     attendance:  {},
-    user:        null,
   };
 
   // ── Firebase refs (inicializadas após firebase.initializeApp) ──
@@ -56,7 +55,7 @@ const MassCallModule = (() => {
       ...data,
       status:      "open",
       createdAt:   Date.now(),
-      createdBy:   state.user?.name || "Officer",
+      createdBy:   AuthModule.currentUser?.name || "Officer",
       attendance:  {},
       composition: buildCompositionTemplate(data.slots || []),
       loot:        { items: [], totalValue: 0 },
@@ -188,7 +187,7 @@ const MassCallModule = (() => {
     const split = calcSplit(call);
     if (!split) return;
 
-    call.result = { ...split, finalizedAt: Date.now(), finalizedBy: state.user?.name };
+    call.result = { ...split, finalizedAt: Date.now(), finalizedBy: AuthModule.currentUser?.name };
     call.status = "done";
 
     const db = getDB();
