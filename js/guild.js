@@ -77,11 +77,11 @@ const GuildModule = (() => {
 
       const db = getDB();
       if (db) {
-        await db.ref(`regeares/${regearId}`).update(reg);
+        await db.ref(tenantPath(`regeares/${regearId}`)).update(reg);
         // Creditár saldo do player
-        await db.ref(`balances/${reg.playerId}`).transaction(curr => (curr || 0) + reg.kitValue);
+        await db.ref(tenantPath(`balances/${reg.playerId}`)).transaction(curr => (curr || 0) + reg.kitValue);
         // Debitar caixa da guild
-        await db.ref("guildBalance").transaction(curr => (curr || 0) - reg.kitValue);
+        await db.ref(tenantPath("guildBalance")).transaction(curr => (curr || 0) - reg.kitValue);
       }
       renderRegearList();
     }
@@ -92,7 +92,7 @@ const GuildModule = (() => {
       reg.status = "rejected";
       reg.reason = reason;
       const db = getDB();
-      if (db) db.ref(`regeares/${regearId}`).update(reg);
+      if (db) db.ref(tenantPath(`regeares/${regearId}`)).update(reg);
       renderRegearList();
     }
 
@@ -157,7 +157,7 @@ const GuildModule = (() => {
     async function fetchMembers() {
       const db = getDB();
       if (db) {
-        const snap = await db.ref("members").once("value");
+        const snap = await db.ref(tenantPath("members")).once("value");
         members = [];
         snap.forEach(c => members.push(c.val()));
         if (members.length) return members;
@@ -240,7 +240,7 @@ const GuildModule = (() => {
       };
       vods.unshift(vod);
       const db = getDB();
-      if (db) db.ref(`vods/${vod.id}`).set(vod);
+      if (db) db.ref(tenantPath(`vods/${vod.id}`)).set(vod);
       renderVodQueue();
     }
 
@@ -261,7 +261,7 @@ const GuildModule = (() => {
       vod.reviewedAt = Date.now();
 
       const db = getDB();
-      if (db) db.ref(`vods/${vodId}`).update(vod);
+      if (db) db.ref(tenantPath(`vods/${vodId}`)).update(vod);
       renderVodQueue();
     }
 
@@ -365,7 +365,7 @@ const GuildModule = (() => {
 
       const db = getDB();
       if (db) {
-        db.ref("vods").on("value", snap => {
+        db.ref(tenantPath("vods")).on("value", snap => {
           vods = [];
           snap.forEach(c => vods.push(c.val()));
           vods.sort((a, b) => b.submittedAt - a.submittedAt);
@@ -458,7 +458,7 @@ const GuildModule = (() => {
     function init() {
       const db = getDB();
       if (db) {
-        db.ref("comps").on("value", snap => {
+        db.ref(tenantPath("comps")).on("value", snap => {
           comps = [];
           snap.forEach(c => comps.push(c.val()));
           if (!comps.length) comps = defaultComps();

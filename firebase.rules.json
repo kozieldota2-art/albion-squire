@@ -1,0 +1,21 @@
+{
+  "rules": {
+    "tenants": {
+      "$tenantId": {
+        ".read": "auth != null && auth.token.tenantId === $tenantId",
+        ".write": "auth != null && auth.token.tenantId === $tenantId",
+
+        "balances": {
+          "$discordId": {
+            ".read": "auth.token.tenantId === $tenantId && $discordId === auth.token.discordId",
+            ".write": false
+          }
+        },
+
+        "guildBalance": {
+          ".write": false
+        }
+      }
+    }
+  }
+}

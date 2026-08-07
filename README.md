@@ -5,6 +5,37 @@ Stack: HTML/CSS/JS vanilla · Firebase Realtime DB · Netlify · Discord.js v14
 
 ---
 
+## 🏠 Modelo de negócio: multi-tenant (SaaS)
+
+O plano é evoluir o Albion Squire pra um ecossistema onde cada guilda é um
+"tenant" isolado, e existe um **painel master** (fora do escopo ainda) de
+onde o dono do produto cria novas guildas e distribui login.
+
+**Estado atual: já preparado, ainda não ligado.**
+- Todo dado no Firebase vive sob `tenants/{tenantId}/...` (ver `tenantPath()`
+  em `js/config.js` e `js/bot.js`).
+- O `tenantId` é lido da URL: `albionsquire.com/g/{tenantId}/...`. Sem esse
+  path, cai no `TENANT_DEFAULT` (`"teste"`) — é assim que a guilda de teste
+  roda hoje, sem precisar de painel master nem login multi-guilda ainda.
+- `netlify.toml` já redireciona qualquer path pra `index.html`, então
+  `/g/nomeguilda` já funciona sem configuração extra.
+- `firebase.rules.json` tem as regras de isolamento por tenant (usam
+  `auth.token.tenantId`, um custom claim que só existe quando o login via
+  Discord OAuth for implementado — até lá, manter o Realtime DB em modo
+  teste como já orientado abaixo).
+
+**Falta pra ativar de verdade (próxima fase, não feita ainda):**
+1. Painel master (rota separada, só pro dono) pra criar tenants e gerar login.
+2. Função serverless (Firebase Cloud Functions ou Netlify Functions) pra
+   criar usuário + custom claim `tenantId` — isso não pode rodar no
+   navegador com segurança.
+3. Trocar `firebase.rules.json` de "modo teste" pras regras reais acima.
+4. O bot Discord recebe o tenant via `.env` (`TENANT_ID=nomeguilda`) — hoje
+   cada bot atende UMA guilda; se quiser um bot só pra todas, precisa de
+   outra abordagem (bot multi-servidor mapeando `Discord Server ID → tenantId`).
+
+---
+
 ## ⚙️ Setup em 5 passos
 
 ### 1. Firebase

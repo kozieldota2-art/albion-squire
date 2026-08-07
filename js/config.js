@@ -14,6 +14,26 @@ const FIREBASE_CONFIG = {
   measurementId:     "G-6J0FVTFPRD"
 };
 
+// ── 🏠 Multi-tenant ──────────────────────────────────
+// Cada guilda vive isolada em tenants/{tenantId}/... no Firebase.
+// URL esperada: albionsquire.com/g/{tenantId}/...
+// Enquanto só temos uma guilda em teste, cai no TENANT_DEFAULT.
+const TENANT_DEFAULT = "teste";
+
+function getTenantId() {
+  if (typeof window === "undefined") return TENANT_DEFAULT;
+  const m = window.location.pathname.match(/\/g\/([a-z0-9-]+)/i);
+  return m ? m[1].toLowerCase() : TENANT_DEFAULT;
+}
+
+const TENANT_ID = getTenantId();
+
+// Prefixa qualquer path do Realtime DB com o tenant atual.
+// Ex: tenantPath("members") -> "tenants/teste/members"
+function tenantPath(path) {
+  return `tenants/${TENANT_ID}/${path}`;
+}
+
 // ── ⚙️ Discord OAuth ─────────────────────────────────
 const DISCORD_CLIENT_ID   = "YOUR_DISCORD_CLIENT_ID";
 const DISCORD_REDIRECT    = window.location.origin + "/auth/callback";

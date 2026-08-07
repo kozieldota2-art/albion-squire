@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════
 // ALBION SQUIRE — masscall.js
 // Sistema de Mass Call / CTA
-// Firebase: db.ref('masscalls'), db.ref('attendance')
+// Firebase: db.ref(tenantPath('masscalls')), db.ref(tenantPath('masscalls/{id}/attendance'))
 // ═══════════════════════════════════════════════════
 
 const MassCallModule = (() => {
@@ -65,7 +65,7 @@ const MassCallModule = (() => {
 
     const db = getDB();
     if (db) {
-      await db.ref(`masscalls/${id}`).set(call);
+      await db.ref(tenantPath(`masscalls/${id}`)).set(call);
       // Enviar webhook pra Discord
       await sendDiscordAnnouncement(call);
     } else {
@@ -123,7 +123,7 @@ const MassCallModule = (() => {
     const entry = { playerId, playerName, weapon: preferredWeapon, ts: Date.now(), status: "pending" };
 
     if (db) {
-      await db.ref(`masscalls/${callId}/attendance/${playerId}`).set(entry);
+      await db.ref(tenantPath(`masscalls/${callId}/attendance/${playerId}`)).set(entry);
     } else if (state.currentCall?.id === callId) {
       state.currentCall.attendance[playerId] = entry;
     }
@@ -170,7 +170,7 @@ const MassCallModule = (() => {
         state.currentCall.composition[slotId].playerName = playerName;
       }
       const db = getDB();
-      if (db) db.ref(`masscalls/${callId}/composition`).set(state.currentCall.composition);
+      if (db) db.ref(tenantPath(`masscalls/${callId}/composition`)).set(state.currentCall.composition);
       renderCallDashboard(state.currentCall);
     }
   }
@@ -186,7 +186,7 @@ const MassCallModule = (() => {
     state.currentCall.loot.totalValue = state.currentCall.loot.items.reduce((s, i) => s + i.total, 0);
 
     const db = getDB();
-    if (db) db.ref(`masscalls/${callId}/loot`).set(state.currentCall.loot);
+    if (db) db.ref(tenantPath(`masscalls/${callId}/loot`)).set(state.currentCall.loot);
     renderLootPanel(state.currentCall);
   }
 
@@ -230,13 +230,13 @@ const MassCallModule = (() => {
 
     const db = getDB();
     if (db) {
-      await db.ref(`masscalls/${callId}`).update({ result: call.result, status: "done" });
+      await db.ref(tenantPath(`masscalls/${callId}`)).update({ result: call.result, status: "done" });
       // Creditar saldos dos players
       for (const s of split.splits) {
-        await db.ref(`balances/${s.playerId}`).transaction(curr => (curr || 0) + s.amount);
+        await db.ref(tenantPath(`balances/${s.playerId}`)).transaction(curr => (curr || 0) + s.amount);
       }
       // Creditar caixa da guild
-      await db.ref("guildBalance").transaction(curr => (curr || 0) + split.guildFee);
+      await db.ref(tenantPath("guildBalance")).transaction(curr => (curr || 0) + split.guildFee);
     }
 
     renderSplitResult(split);
@@ -611,7 +611,7 @@ const MassCallModule = (() => {
     if (!state.currentCall) return;
     state.currentCall.status = "active";
     const db = getDB();
-    if (db) db.ref(`masscalls/${state.currentCall.id}/status`).set("active");
+    if (db) db.ref(tenantPath(`masscalls/${state.currentCall.id}/status`)).set("active");
     renderCallDashboard(state.currentCall);
   }
 
@@ -670,7 +670,7 @@ const MassCallModule = (() => {
     // Ouvir Firebase em tempo real
     const db = getDB();
     if (db) {
-      db.ref("masscalls").orderByChild("createdAt").limitToLast(20).on("value", snap => {
+      db.ref(tenantPath("masscalls")).orderByChild("createdAt").limitToLast(20).on("value", snap => {
         state.activeCalls = [];
         snap.forEach(child => state.activeCalls.unshift(child.val()));
         renderCallList();

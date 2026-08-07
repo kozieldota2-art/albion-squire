@@ -20,6 +20,15 @@ admin.initializeApp({
 
 const db = admin.database();
 
+// ── 🏠 Multi-tenant ──────────────────────────────────
+// Cada bot Discord serve UMA guilda, definida via .env (TENANT_ID).
+// Enquanto só temos a guilda em teste, cai no "teste" também.
+const TENANT_ID = process.env.TENANT_ID || "teste";
+
+function tenantPath(path) {
+  return `tenants/${TENANT_ID}/${path}`;
+}
+
 // ── Discord client ────────────────────────────────
 const client = new Client({
   intents: [
@@ -112,7 +121,7 @@ function fmt(n) {
 }
 
 async function getActiveMassCall() {
-  const snap = await db.ref("masscalls")
+  const snap = await db.ref(tenantPath("masscalls"))
     .orderByChild("status").equalTo("open")
     .limitToLast(1)
     .once("value");
@@ -172,7 +181,7 @@ client.on("interactionCreate", async interaction => {
       messageId:   null,
     };
 
-    await db.ref(`masscalls/${id}`).set(call);
+    await db.ref(tenantPath(`masscalls/${id}`)).set(call);
 
     const embed = new EmbedBuilder()
       .setColor(0x1DA898)
@@ -190,7 +199,7 @@ client.on("interactionCreate", async interaction => {
     );
 
     const msg = await interaction.reply({ embeds: [embed], components: [row], fetchReply: true });
-    await db.ref(`masscalls/${id}/messageId`).set(msg.id);
+    await db.ref(tenantPath(`masscalls/${id}/messageId`)).set(msg.id);
 
     console.log(`Mass call criado: ${id} por ${user.username}`);
   }
@@ -211,9 +220,9 @@ client.on("interactionCreate", async interaction => {
       status:     "pending",
     };
 
-    await db.ref(`masscalls/${call.id}/attendance/${user.id}`).set(entry);
+    await db.ref(tenantPath(`masscalls/${call.id}/attendance/${user.id}`)).set(entry);
 
-    const attSnap = await db.ref(`masscalls/${call.id}/attendance`).once("value");
+    const attSnap = await db.ref(tenantPath(`masscalls/${call.id}/attendance`)).once("value");
     const att = [];
     attSnap.forEach(c => att.push(c.val()));
 
@@ -234,7 +243,7 @@ client.on("interactionCreate", async interaction => {
     const call = await getActiveMassCall();
     if (!call) return interaction.reply({ content: "❌ Nenhum mass call ativo.", ephemeral: true });
 
-    await db.ref(`masscalls/${call.id}/attendance/${user.id}`).remove();
+    await db.ref(tenantPath(`masscalls/${call.id}/attendance/${user.id}`)).remove();
     await interaction.reply({ content: "✅ Inscrição cancelada.", ephemeral: true });
   }
 
@@ -243,7 +252,7 @@ client.on("interactionCreate", async interaction => {
     const call = await getActiveMassCall();
     if (!call) return interaction.reply({ content: "❌ Nenhum mass call ativo.", ephemeral: true });
 
-    const attSnap = await db.ref(`masscalls/${call.id}/attendance`).once("value");
+    const attSnap = await db.ref(tenantPath(`masscalls/${call.id}/attendance`)).once("value");
     const att = [];
     attSnap.forEach(c => att.push(c.val()));
 
@@ -299,7 +308,7 @@ client.on("interactionCreate", async interaction => {
         requestedAt: Date.now(),
       };
 
-      await db.ref(`regeares/${eventId}`).set(regear);
+      await db.ref(tenantPath(`regeares/${eventId}`)).set(regear);
 
       const embed = new EmbedBuilder()
         .setColor(0xC08828)
@@ -329,7 +338,7 @@ client.on("interactionCreate", async interaction => {
 
   // ══ /saldo ══
   else if (commandName === "saldo") {
-    const snap = await db.ref(`balances/${user.id}`).once("value");
+    const snap = await db.ref(tenantPath(`balances/${user.id}`)).once("value");
     const saldo = snap.val() || 0;
 
     const embed = new EmbedBuilder()
@@ -348,7 +357,7 @@ client.on("interactionCreate", async interaction => {
     const call = await getActiveMassCall();
     if (!call) return interaction.reply({ content: "❌ Nenhum mass call ativo.", ephemeral: true });
 
-    await db.ref(`masscalls/${call.id}/status`).set("ended");
+    await db.ref(tenantPath(`masscalls/${call.id}/status`)).set("ended");
     await interaction.reply({ content: `✅ Mass call **${call.titulo}** encerrado. Vá para o site para processar o split.` });
   }
 
@@ -364,7 +373,7 @@ client.on("interactionCreate", async interaction => {
     const repairFee = Math.round(total * 0.03);
     const distrib   = total - guildFee - repairFee;
 
-    const attSnap = await db.ref(`masscalls/${call.id}/attendance`).once("value");
+    const attSnap = await db.ref(tenantPath(`masscalls/${call.id}/attendance`)).once("value");
     const players = [];
     attSnap.forEach(c => players.push(c.val()));
 
@@ -384,7 +393,7 @@ client.on("interactionCreate", async interaction => {
       );
 
     // Salvar split no Firebase
-    await db.ref(`masscalls/${call.id}/result`).set({
+    await db.ref(tenantPath(`masscalls/${call.id}/result`)).set({
       total, guildFee, repairFee, distributable: distrib, perPlayer,
       players: players.map(p => ({ ...p, amount: perPlayer })),
       finalizedAt: Date.now(),
@@ -394,11 +403,11 @@ client.on("interactionCreate", async interaction => {
     // Atualizar saldos
     for (const p of players) {
       if (p.discordId) {
-        await db.ref(`balances/${p.discordId}`).transaction(curr => (curr || 0) + perPlayer);
+        await db.ref(tenantPath(`balances/${p.discordId}`)).transaction(curr => (curr || 0) + perPlayer);
       }
     }
 
-    await db.ref("guildBalance").transaction(curr => (curr || 0) + guildFee);
+    await db.ref(tenantPath("guildBalance")).transaction(curr => (curr || 0) + guildFee);
     await interaction.reply({ embeds: [embed] });
   }
 
@@ -417,7 +426,7 @@ client.on("interactionCreate", async interaction => {
       status:      "pending",
     };
 
-    await db.ref(`vods/${vod.id}`).set(vod);
+    await db.ref(tenantPath(`vods/${vod.id}`)).set(vod);
     await interaction.reply({ content: `✅ VOD enviado! Será revisado por um officer em breve. 🎬`, ephemeral: true });
   }
 });
@@ -439,12 +448,12 @@ client.on("interactionCreate", async interaction => {
       ts:         Date.now(),
       status:     "pending",
     };
-    await db.ref(`masscalls/${callId}/attendance/${user.id}`).set(entry);
+    await db.ref(tenantPath(`masscalls/${callId}/attendance/${user.id}`)).set(entry);
     await interaction.reply({ content: "✅ Inscrito! Use `/join [arma]` para definir sua arma.", ephemeral: true });
   }
 
   if (action === "leave") {
-    await db.ref(`masscalls/${callId}/attendance/${user.id}`).remove();
+    await db.ref(tenantPath(`masscalls/${callId}/attendance/${user.id}`)).remove();
     await interaction.reply({ content: "✅ Inscrição cancelada.", ephemeral: true });
   }
 });
